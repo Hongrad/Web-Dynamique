@@ -1,0 +1,32 @@
+CREATE TABLE Professeur(
+    idProfesseur int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    nom varchar(40) NOT NULL,
+    prenom varchar(40),
+    module varchar(5)
+);
+CREATE TABLE Etudiant(
+    idEtudiant int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    nom varchar(40) NOT NULL,
+    prenom varchar(40)
+);
+CREATE TABLE Question(
+    idQuestion int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    intitulle varchar(40) NOT NULL,
+    multiple varchar(40) NOT NULL
+);
+CREATE TABLE Reponse(
+    idReponse int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    libelle varchar(40),
+    estLaReponse boolean,
+    idQuestion int,
+    FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion)
+);
+CREATE TABLE Questionnaire(
+    idQuestionnaire int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    pid int,
+    motDePasse varchar(50),
+    idReponse int,
+    idProfesseur int,
+    FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion),
+    FOREIGN KEY (idProfesseur) REFERENCES Professeur(idProfesseur)
+);
