@@ -1,32 +1,45 @@
 CREATE TABLE Professeur(
     idProfesseur int AUTO_INCREMENT PRIMARY KEY NOT NULL,
     nom varchar(40) NOT NULL,
-    prenom varchar(40),
-    module varchar(5)
+    prenom varchar(40) NOT NULL,
+    module varchar(5) NOT NULL
 );
 CREATE TABLE Etudiant(
     idEtudiant int AUTO_INCREMENT PRIMARY KEY NOT NULL,
     nom varchar(40) NOT NULL,
-    prenom varchar(40)
+    prenom varchar(40) NOT NULL
 );
 CREATE TABLE Question(
     idQuestion int AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    intitulle varchar(40) NOT NULL,
-    multiple varchar(40) NOT NULL
+    libelle varchar(40) NOT NULL,
+    multiple boolean NOT NULL,
+    reponses JSON NOT NULL
 );
+
 CREATE TABLE Reponse(
     idReponse int AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    libelle varchar(40),
-    estLaReponse boolean,
+    libelle varchar(40) NOT NULL,
+    estLaReponse boolean NOT NULL,
     idQuestion int,
     FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion)
 );
 CREATE TABLE Questionnaire(
     idQuestionnaire int AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    pid int,
-    motDePasse varchar(50),
-    idReponse int,
+    pid int NOT NULL,
+    motDePasse varchar(50) NOT NULL,
+    idQuestion int,
     idProfesseur int,
     FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion),
     FOREIGN KEY (idProfesseur) REFERENCES Professeur(idProfesseur)
+);
+CREATE TABLE Resultat(
+  idEtudiant int NOT NULL,
+  idQuestionnaire int NOT NULL,
+  idQuestion int NOT NULL,
+  idReponse int NOT NULL,
+  FOREIGN KEY (idEtudiant) REFERENCES Etudiant(idEtudiant),
+  FOREIGN KEY (idQuestionnaire) REFERENCES Questionnaire(idQuestionnaire),
+  FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion),
+  FOREIGN KEY (idReponse) REFERENCES Reponse(idReponse),
+  CONSTRAINT PK_Resultat PRIMARY KEY (idEtudiant,idQuestionnaire,idQuestion,idReponse)
 );
