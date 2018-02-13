@@ -2,13 +2,17 @@ CREATE TABLE Professeur(
     idProfesseur int AUTO_INCREMENT PRIMARY KEY NOT NULL,
     nom varchar(40) NOT NULL,
     prenom varchar(40) NOT NULL,
+    nomDeCompte varchar(50) NOT NULL,
+    motDePasse varchar(50) NOT NULL,
     module varchar(5) NOT NULL
 );
+
 CREATE TABLE Etudiant(
     idEtudiant int AUTO_INCREMENT PRIMARY KEY NOT NULL,
     nom varchar(40) NOT NULL,
     prenom varchar(40) NOT NULL
 );
+
 CREATE TABLE Question(
     idQuestion int AUTO_INCREMENT PRIMARY KEY NOT NULL,
     libelle varchar(40) NOT NULL,
@@ -23,13 +27,13 @@ CREATE TABLE Reponse(
     idQuestion int,
     FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion)
 );
+
 CREATE TABLE Questionnaire(
     idQuestionnaire int AUTO_INCREMENT PRIMARY KEY NOT NULL,
     pid int NOT NULL,
     motDePasse varchar(50) NOT NULL,
-    idQuestion int,
+    questions JSON NOT NULL,
     idProfesseur int,
-    FOREIGN KEY (idQuestion) REFERENCES Question(idQuestion),
     FOREIGN KEY (idProfesseur) REFERENCES Professeur(idProfesseur)
 );
 CREATE TABLE Resultat(
