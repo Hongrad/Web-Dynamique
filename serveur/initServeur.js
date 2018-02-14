@@ -18,7 +18,7 @@ var serveur = http.createServer(
     var page = url.parse(request.url).pathname;
     console.log('Page demandée : ' + page);
     if (page == '/accueil.html') {
-      envoyerFichier('../accueil.html', result);
+      envoyerFichier('../template/accueil.html', result);
     }
   }
 );
