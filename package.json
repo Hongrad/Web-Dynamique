@@ -1,0 +1,22 @@
+{
+  "name": "web-dynamique",
+  "version": "1.0.0",
+  "description": "Site web en node je réalisé par Valentin, Baptiste et Benoit",
+  "main": "serveur/initServeur.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hongrad/Web-Dynamique.git"
+  },
+  "author": "Valentin, Baptiste, Benoit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hongrad/Web-Dynamique/issues"
+  },
+  "homepage": "https://github.com/Hongrad/Web-Dynamique#readme",
+  "dependencies": {
+    "socket.io": "^2.0.4"
+  }
+}

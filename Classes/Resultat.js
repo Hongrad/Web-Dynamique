@@ -1,7 +1,7 @@
 /**
  * Un Resultat
  */
-class Resultat {
+module.exports = class Resultat {
 
     /**
      *
@@ -110,9 +110,4 @@ class Resultat {
     set idReponse(value) {
         this._idReponse = value;
     }
-}
-
-if (typeof window === 'undefined') {
-    // Coté serveur
-    module.exports = Resultat;
 }

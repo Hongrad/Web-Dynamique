@@ -1,7 +1,9 @@
+const Client = require('./Client');
+
 /**
  * Un Professeur
  */
-class Professeur {
+module.exports = class Professeur extends Client {
 
     /**
      *
@@ -13,6 +15,8 @@ class Professeur {
      * @param moduleA
      */
     constructor(idProfesseur, nom, prenom, nomDeCompte, motDePasse, moduleA) {
+        super(null);
+
         this._idProfesseur = idProfesseur;
         this._nom = nom;
         this._prenom = prenom;
@@ -118,9 +122,4 @@ class Professeur {
     set moduleA(value) {
         this._moduleA = value;
     }
-}
-
-if (typeof window === 'undefined') {
-    // Coté serveur
-    module.exports = Professeur;
 }
