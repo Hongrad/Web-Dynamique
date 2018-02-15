@@ -1,19 +1,43 @@
 <html>
 <head>
   <title>Accueil</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Feuille de style -->
+  <link type="text/css" href="css/style.css" rel="stylesheet" />
+
+  <!-- JavaScript -->
+  <!-- <script src="js/script.js" type="text/javascript"></script> -->
+  <!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script>-->
+
 </head>
 <body>
-  <header></header>
-  <h1>Bienvenu sur notre super site</h1>
+  <header>
+    <h1>Bienvenu sur notre super site</h1>
+    <div id="menu">
+      <ul id="menu_horizontal">
+        <li><a href="">Accueil</a></li>
+        <li><a href="">News</a></li>
+        <li><a href="">Livre d'or</a></li>
+        <li><a href="">Contact</a></li>
+        <li><a href="">Admin</a></li>
+      </ul>
+    </div>
+  </header>
   <footer>
     <p>By Valentin, Baptise & Benoit</p>
   </footer>
 </body>
+<script>
+  //var socket = io.connect('http://localhost:666');
+  console.log("socket");
+</script>
 <script src="../Classes/Questionnaire.js" type="text/javascript"></script>
 <script>
-  var q = new Questionnaire();
-  console.log(q);
-  q.addQuestion(24);
-  console.log(q);
+//var q = new Questionnaire();
+//console.log(q);
+//q.addQuestion(24);
+//console.log(q);
 </script>
 </html>

@@ -1,3 +1,10 @@
+conf = require('./conf.json');
+
+const express = require('express'),
+app     = express();
+//server  = require('http').createServer(app).listen(666);
+
+
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
@@ -9,7 +16,9 @@ function envoyerFichier(filepath, result) {
     result.end('Page ' + filepath + ' could not be found');
   } else {
     result.writeHead(200, {'Content-Type': 'text/html'});
-    result.write(data);result.end();}
+    result.write(data);
+    result.end();
+  }
   });
 }
 
@@ -23,4 +32,12 @@ var serveur = http.createServer(
   }
 );
 
-serveur.listen(50000);
+serveur.listen(666);
+
+app.use(function (req, res, next) {
+  console.log('Time:', Date.now());
+  next();
+});
+//app.use('../template/css', express.static('../template/css'));
+//io = require('socket.io');
+//io.listen(serveur);
