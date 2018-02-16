@@ -11,10 +11,10 @@ module.exports = class Etudiant extends Client {
      * @param nom
      * @param prenom
      */
-    constructor(idEtudiant, nom, prenom) {
+    constructor(nom, prenom) {
         super(null);
 
-        this._idEtudiant = idEtudiant;
+        this._idEtudiant = -1;
         this._nom = nom;
         this._prenom = prenom;
     }
@@ -26,43 +26,31 @@ module.exports = class Etudiant extends Client {
     /**
      * Crée un etudiant en BD et met à jour son id
      *
+     * @param db
      * @returns {boolean} true si succes
      */
-    createInDB() {
-        // Todo
-        return false;
+    createInDB(db) {
+        db.query("INSERT INTO etudiant (nom,prenom) VALUES (?,?)", [this._nom,this._prenom], function (err, result) {
+            if (err) throw err;
+            console.log(result);
+        });
     }
 
     /**
      * Récupère un étudiant via son id
      *
+     * @param db
      * @param id
      * @returns {Etudiant}
      */
-    static getById(id) {
-        // Todo
-        return null;
-    }
-
-    /**
-     * Met à jour l'étudiant en BD
-     *
-     * @returns {boolean} true si succes
-     */
-    updateInDB() {
-        // Todo
-        return false;
-    }
-
-    /**
-     * Supprime un étudiant de la BD
-     *
-     * @param id
-     * @returns {boolean} true si succes
-     */
-    static remove(id) {
-        // Todo
-        return false;
+    getById(db,id) {
+      db.query("SELECT * FROM etudiant WHERE idEtudiant=?", [id], function (err, result) {
+          if (err) throw err;
+          /*this._idEtudiant = result[0]['idEtudiant'];
+          this._nom = result[0]['nom'];
+          this._prenom = result[0]['prenom'];
+          console.log(this);*/ //TODO voir comment on souhaite faire pour les etudiants quand on getById on modifie le this ou pas ?
+      });
     }
 
     // ------------------------------------------------------------------------------

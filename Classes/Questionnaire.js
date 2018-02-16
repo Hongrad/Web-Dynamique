@@ -11,9 +11,9 @@ class Questionnaire {
      * @param questions
      * @param idProfesseur
      */
-    constructor(idQuestionnaire, pid, motDePasse, questions, idProfesseur) {
-        this._idQuestionnaire = idQuestionnaire;
-        this._pid = pid;
+    constructor(motDePasse, questions, idProfesseur) {
+        this._idQuestionnaire = -1;
+        this._pid = generatePid();
         this._motDePasse = motDePasse;
         this._questions = questions;
         this._idProfesseur = idProfesseur;
@@ -39,22 +39,28 @@ class Questionnaire {
     /**
      * Crée un questionnaire en BD et met à jour son id
      *
+     * @param db
      * @returns {boolean} true si succes
      */
-    createInDB() {
-        // Todo
-        return false;
+    createInDB(db) {
+      db.query("INSERT INTO questionnaire (pid,motDePasse,questions,idProfesseur) VALUES (?,?,?,?)", [this._pid,this._motDePasse,this._questions,this._idProfesseur], function (err, result) {
+          if (err) throw err;
+          console.log(result);
+      });
     }
 
     /**
      * Récupère un questionnaire via son id
      *
+     * @param db
      * @param id
      * @returns {Etudiant}
      */
-    static getById(id) {
-        // Todo
-        return null;
+    static getById(db,id) {
+      db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     /**
@@ -63,7 +69,7 @@ class Questionnaire {
      * @returns {boolean} true si succes
      */
     updateInDB() {
-        // Todo
+        // TODO seulement pour les questions
         return false;
     }
 
@@ -74,7 +80,7 @@ class Questionnaire {
      * @returns {boolean} true si succes
      */
     static remove(id) {
-        // Todo
+        // TODO seulement pour les questions
         return false;
     }
 
