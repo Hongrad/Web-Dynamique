@@ -24,55 +24,56 @@ module.exports = class Resultat {
     /**
      * Crée un resultat en BD et met à jour son id
      *
+     * @param db
      * @returns {boolean} true si succes
      */
     createInDB() {
-        // Todo
-        return false;
+      db.query("INSERT INTO resultat (idEtudiant,idQuestionnaire,idQuestion,idReponse) VALUES (?,?,?,?)", [this._idEtudiant,this._idQuestionnaire,this._idQuestion,this._idReponse], function (err, result) {
+          if (err) throw err;
+          console.log(result);
+      });
     }
 
     /**
-     * Récupère un resultat via son id
-     *
-     * @param id
-     * @returns {Etudiant}
+    * Récupère un resultat via id Questionnaire
+    *
+    * @param db
+    * @param id
+    * @returns
      */
-    static getById(id) {
-        // Todo
-        return null;
-    }
-
-    getByQuestionnaireId(idQuestionnaire) {
-        //TODO retourne tout les résultat pour un questionnaire spécifique
-    }
-
-    getByEtudiantId(idEtudiant) {
-        //TODO retourne tout les résultat pour un étudiant spécifique
-    }
-
-    getByQuestionId(idQuestion) {
-        //TODO retourne tout les résultat pour une question spécifique
+    getByQuestionnaireId(db,idQuestionnaire) {
+      db.query("SELECT * FROM resultat WHERE idQuestionnaire=?", [idQuestionnaire], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     /**
-     * Met à jour le resultat en BD
-     *
-     * @returns {boolean} true si succes
+    * Récupère un resultat via id etu x id Questionnaire
+    *
+    * @param db
+    * @param id
+    * @returns
      */
-    updateInDB() {
-        // Todo
-        return false;
+    getByEtudiantId(db,idQuestionnaire,idEtudiant) {
+      db.query("SELECT * FROM resultat WHERE idQuestionnaire=? AND idEtudiant=?", [idQuestionnaire,idEtudiant], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     /**
-     * Supprime un resultat de la BD
-     *
-     * @param id
-     * @returns {boolean} true si succes
+    * Récupère un resultat via id question x id Questionnaire
+    *
+    * @param db
+    * @param id
+    * @returns
      */
-    static remove(id) {
-        // Todo
-        return false;
+    getByQuestionId(db,idQuestionnaire,idQuestion) {
+      db.query("SELECT * FROM resultat WHERE idQuestionnaire=? AND idQuestion=?", [idQuestionnaire,idQuestion], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     // ------------------------------------------------------------------------------

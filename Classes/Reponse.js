@@ -25,22 +25,28 @@ class Reponse {
     /**
      * Crée une réponse en BD et met à jour son id
      *
+     * @param db
      * @returns {boolean} true si succes
      */
-    createInDB() {
-        // Todo
-        return false;
+    createInDB(db) {
+      db.query("INSERT INTO reponse (libelle,estLaReponse,idQuestion) VALUES (?,?,?)", [this._libelle,this._estLaReponse,this._idQuestion], function (err, result) {
+          if (err) throw err;
+          console.log(result);
+      });
     }
 
     /**
      * Récupère une réponse via son id
      *
+     * @param db
      * @param id
      * @returns {Etudiant}
      */
-    static getById(id) {
-        // Todo
-        return null;
+    static getById(db,id) {
+      db.query("SELECT * FROM reponse WHERE idReponse=?", [id], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     /**
