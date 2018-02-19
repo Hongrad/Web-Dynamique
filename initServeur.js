@@ -14,6 +14,10 @@ server.get('/:idObjet/Questionnaire', function(req, res) {
   params.nom = "idQuestionnaire";
   res.render('Questionnaire.ejs', params);
 });
+server.get('/', function(req, res) {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.sendFile(path.join((__dirname + '/template/accueil.html')))
+});
 
 var connection = mysql.createConnection({
   host : 'localhost',
