@@ -9,7 +9,6 @@ var EtudiantModule = require('./Classes/Etudiant.js');
 var server = express();
 
 server.get('/', function(req, res) {
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join((__dirname + '/template/accueil.html')))
 });
 server.get('/connexion', function(req, res) {
@@ -40,6 +39,9 @@ server.get('/questionnaires', function(req, res) {
 });
 server.get('/questionnaire', function(req, res) {
   res.sendFile(path.join((__dirname + '/template/previewQuestionnaire.html')))
+});
+server.get('/attente', function(req, res) {
+  res.sendFile(path.join((__dirname + '/template/attente.html')))
 });
 
 server.get('/:idObjet/Questionnaire', function(req, res) {

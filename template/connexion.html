@@ -4,33 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
+
   <!-- Feuille de style -->
   <link type="text/css" href="css/style.css" rel="stylesheet" />
 </head>
 <body>
-
-  <fieldset><legend>Identifiants</legend>
-
-    <label for="pseudo">* Pseudo :</label>  <input name="pseudo" type="text" id="pseudo" /> (le pseudo doit contenir entre 3 et 15 caractères)<br />
-
-    <label for="password">* Mot de Passe :</label><input type="password" name="password" id="password" /><br />
-
-    <label for="confirm">* Confirmer le mot de passe :</label><input type="password" name="confirm" id="confirm" />
-
-  </fieldset>
-
-  <fieldset><legend>Informations supplémentaires</legend>
-
-    <label for="localisation">Localisation :</label><input type="text" name="localisation" id="localisation" />
-
-  </fieldset>
-
-  <p>Les champs précédés d un * sont obligatoires</p>
-
-  <p><input type="submit" value="S\'inscrire" /></p>
-
-</div>
-
+  <header>
+    <a href="/" class="titre">ask<br/><span>.lab</span></a>
+  </header>
+  <div class="connexion">
+    <div class="connexion-form">
+        <h3>Accès questionnaires</h3>
+        <legend>Connexion :</legend>
+        <input type="text" name="login" id="login" placeholder="Entrez votre Identifiant"/>
+        <input type="password" name="password" id="password" placeholder="Mot de passe"/>
+    </div>
+    <div class="connexion-form">
+        <h3>Participer à un questionnaire</h3>
+        <input type="text" name="pseudo" id="pseudo" placeholder="Entrez votre prénom"/>
+        <input type="text" name="pin" id="pin" placeholder="Entrez le code PIN"/>
+    </div>
+  </div>
 </body>
 
 </html>
