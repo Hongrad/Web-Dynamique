@@ -3,8 +3,6 @@
  */
 class Question {
 
-    static _nbReponse = 4;
-
     /**
      *
      * @param idQuestion
@@ -85,7 +83,7 @@ class Question {
     // ------------------------------------------------------------------------------
 
     static get nbReponse() {
-        return this._nbReponse;
+        return 4;
     }
 
     get idQuestion() {
