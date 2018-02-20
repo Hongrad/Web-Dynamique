@@ -10,8 +10,8 @@ class Question {
      * @param multiple
      * @param reponses
      */
-    constructor(idQuestion, libelle, multiple, reponses) {
-        this._idQuestion = idQuestion;
+    constructor(libelle, multiple, reponses) {
+        this._idQuestion = -1;
         this._libelle = libelle;
         this._multiple = multiple;
         this._reponses = reponses;
@@ -39,22 +39,28 @@ class Question {
     /**
      * Crée une question en BD et met à jour son id
      *
+     * @param db
      * @returns {boolean} true si succes
      */
-    createInDB() {
-        // Todo
-        return false;
+    createInDB(db) {
+      db.query("INSERT INTO question (libelle,multiple,reponses) VALUES (?,?,?)", [this._libelle,this._multiple,this._reponses], function (err, result) {
+          if (err) throw err;
+          console.log(result);
+      });
     }
 
     /**
      * Récupère une question via son id
      *
+     * @param db
      * @param id
      * @returns {Etudiant}
      */
-    static getById(id) {
-        // Todo
-        return null;
+    static getById(db,id) {
+      db.query("SELECT * FROM question WHERE idQuestion=?", [id], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     /**
@@ -63,7 +69,7 @@ class Question {
      * @returns {boolean} true si succes
      */
     updateInDB() {
-        // Todo
+        // TODO update seulement les reponses
         return false;
     }
 
@@ -74,7 +80,7 @@ class Question {
      * @returns {boolean} true si succes
      */
     static remove(id) {
-        // Todo
+        // TODO delete seulement les reponses
         return false;
     }
 

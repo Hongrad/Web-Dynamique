@@ -14,10 +14,10 @@ module.exports = class Professeur extends Client {
      * @param motDePasse
      * @param moduleA
      */
-    constructor(idProfesseur, nom, prenom, nomDeCompte, motDePasse, moduleA) {
+    constructor(nom, prenom, nomDeCompte, motDePasse, moduleA) {
         super(null);
 
-        this._idProfesseur = idProfesseur;
+        this._idProfesseur = -1;
         this._nom = nom;
         this._prenom = prenom;
         this._nomDeCompte = nomDeCompte;
@@ -32,43 +32,28 @@ module.exports = class Professeur extends Client {
     /**
      * Crée un professeur en BD et met à jour son id
      *
+     * @param db
      * @returns {boolean} true si succes
      */
-    createInDB() {
-        // Todo
-        return false;
+    createInDB(db) {
+      db.query("INSERT INTO professeur (nom,prenom,nomDeCompte,motDePasse,module) VALUES (?,?,?,?,?)", [this._nom,this._prenom,this._nomDeCompte,this._motDePasse,this._moduleA], function (err, result) {
+          if (err) throw err;
+          console.log(result);
+      });
     }
 
     /**
      * Récupère un professeur via son id
      *
+     * @param db
      * @param id
      * @returns {Etudiant}
      */
-    static getById(id) {
-        // Todo
-        return null;
-    }
-
-    /**
-     * Met à jour le professeur en BD
-     *
-     * @returns {boolean} true si succes
-     */
-    updateInDB() {
-        // Todo
-        return false;
-    }
-
-    /**
-     * Supprime un professeur de la BD
-     *
-     * @param id
-     * @returns {boolean} true si succes
-     */
-    static remove(id) {
-        // Todo
-        return false;
+    static getById(db,id) {
+      db.query("SELECT * FROM professeur WHERE idProfesseur=?", [id], function (err, result) {
+          if (err) throw err;
+          //TODO voir getById Etudiant
+      });
     }
 
     // ------------------------------------------------------------------------------
