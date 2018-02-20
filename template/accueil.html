@@ -38,6 +38,8 @@
 </body>
 <script>
   //var socket = io.connect('http://localhost:666');
+<script src="js/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="/socket.io/socket.io.js">/var socket = io.connect('http://localhost:666');
   console.log("socket");
 </script>
 <script src="../Classes/Questionnaire.js" type="text/javascript"></script>
@@ -46,5 +48,94 @@
 //console.log(q);
 //q.addQuestion(24);
 //console.log(q);
+    // js pour le questionnaire
+
+    var socket = null;
+
+    var questionnaireId = null;
+    var motDePasse = null;
+
+    /**
+     *
+     * @param question
+     */
+    function afficherQuestion(question){
+        // Todo : afficher la nouvelle question
+    }
+
+    /**
+     *
+     */
+    function envoyerReponse(reponse){
+        // Todo : envoyer une réponse
+        socket.emit("answerQuestion", null);
+    }
+
+    function initialisationConnexion(){
+        // Identification
+        // Todo
+        socket.emit("identify", null);
+
+        socket.on('connectionSuccess', function (data) {
+            // Connexion au questionnaire
+            console.log("connection réussi");
+            socket.emit("connectToQuestioning", {"questionnaireId": questionnaireId, "motDePasse": motDePasse});
+        });
+    }
+
+    $(function () {
+        // ------------------------------------------------------------------------------------------
+        // initialisation de la connexion
+        // ------------------------------------------------------------------------------------------
+
+        socket = io.connect();
+
+        questionnaireId = null; // Todo : le récupérer
+        motDePasse = null; // Todo : le récupérer
+
+        initialisationConnexion();
+
+        // ------------------------------------------------------------------------------------------
+
+
+
+        // Réception d'une nouvelle question
+        socket.on('newQuestion', function(data){
+            // Todo : récupérer la question
+            console.log("test new question");
+            afficherQuestion(null);
+        });
+
+        // Demande d'arret des réponses
+        socket.on('stopAnswerQuestion', function(data){
+            // Todo : afficher quelque chose car on ne peut plus répondre à la question
+            console.log("test stop question");
+        });
+
+        // Réception des résultats
+        socket.on('showResultQuestion', function(data){
+            // Todo : afficher les résultats
+            console.log("test stop question");
+        });
+
+        // Une erreur
+        socket.on('error', function(data){
+            console.log("Erreur : ");
+            console.log(data);
+        });
+
+        // Le serveur n'est plus joignable
+        socket.on('disconnect', function(data){
+            // Todo : afficher un message
+            console.log("test deconnecté");
+        });
+
+        // Serveur de retour joignable
+        socket.on('reconnect', function(data){
+            // Todo : afficher un message
+            console.log("test reconnect");
+            initialisationConnexion();
+        });
+    });
 </script>
 </html>

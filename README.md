@@ -2,6 +2,13 @@
 
 -------------------------
 
+** Valentin Bouchet - 20/02 **
+
+Début des sockets : Initialisation de la connexion et mise en place des premières fonctions.
+Ajout des modules "cookie-parser" et "express-session" qui seront utiles par la suite pour les sessions des utilisateurs.
+
+-------------------------
+
 ** Benoit Costechareyre - 16/02 **
 
 Un dossier divers a été créé, il regroupe les divers fichiers qui ne sont pas utilisé par le site
