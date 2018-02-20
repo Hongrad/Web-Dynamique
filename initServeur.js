@@ -77,6 +77,7 @@ etudiant.getById(connection,2);
 
 
 server.use('/css', express.static(path.join(__dirname + '/template/css')));
+server.use('/img', express.static(path.join(__dirname + '/template/img')));
 server.use('/Classes', express.static(path.join(__dirname + '/Classes')));
 
 server.listen(666);

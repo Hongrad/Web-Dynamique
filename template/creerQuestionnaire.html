@@ -11,12 +11,12 @@
 </head>
 <body>
   <header>
-    <a href="/" class="titre">ask<br/><span>.lab</span></a>
+    <a href="/" class="titre"><img class="logo" src="/img/logotr.png" alt="logo du site" /></a>
   </header>
-  <div id="menu">Menu</div>
-  <div class="">
-    <div class="">
-        <input type="text" id="titreQuestionnaire" value="Créer votre questionnaire: "/>
+  <div id="menu"><button>Menu</button></div>
+  <div class="content">
+    <div class="titre-questionnaire">
+        <h3>Créez votre questionnaire : <input type="text" id="titreQuestionnaire" placeholder="Insérez votre titre"/></h3>
     </div>
     <div class="creerQ-question">
       <p class="titreQuestion">Question 1 / <input type="text" id="titreQuestion" placeholder="Titre de la question"/></p>
@@ -28,7 +28,7 @@
         </ul>
     </div>
     <div class="creerQ-question">
-      <p class="titreQuestion">Question 1 / <input type="text" id="titreQuestion" placeholder="Titre de la question"/></p>
+      <p class="titreQuestion">Question 2 / <input type="text" id="titreQuestion" placeholder="Titre de la question"/></p>
         <ul>
           <li>Réponse 1 : <input type="text" id="" placeholder=""/></li>
           <li>Réponse 2 : <input type="text" id="" placeholder=""/></li>
@@ -36,7 +36,10 @@
           <button>+</button> Ajouter une possibilité
         </ul>
     </div>
-    <button>+</button> Ajouter une question
+      <div class="creerQ-question questionnaires-bloc ajouter-questionnaire">
+        <span style="display:flex;"><button>+</button></span>
+        <p class="questionnaires-bloc-titre" style="margin-bottom: 0;">Ajouter une question</p>
+      </div>
   </div>
   <button> Enregitrer </button>
 </body>
