@@ -95,7 +95,6 @@ server.use('/img', express.static(path.join(__dirname + '/template/img')));
 server.use('/js', express.static(path.join(__dirname + '/template/js')));
 server.use('/Classes', express.static(path.join(__dirname + '/Classes')));
 
-server.listen(666);
 server.use(cookieParser());
 server.use(session({
     secret: "a secret key",

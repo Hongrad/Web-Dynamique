@@ -3,7 +3,9 @@
  */
 class Question {
 
-    static _nbReponse = 4;
+    static get nbReponse() {
+        return 4;
+    }
     
     /**
      *
@@ -89,10 +91,6 @@ class Question {
     // ------------------------------------------------------------------------------
     // Getter / Setter
     // ------------------------------------------------------------------------------
-
-    static get nbReponse() {
-        return this._nbReponse;
-    }
 
     get idQuestion() {
         return this._idQuestion;
