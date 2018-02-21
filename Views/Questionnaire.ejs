@@ -1,1 +1,85 @@
-<p>Questionnaire n°<%= idObjet %></p>
+<p>Questionnaire n°<%= questionnaireId %></p>
+
+<script src="/js/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/Classes/Questionnaire.js" type="text/javascript"></script>
+<script>
+    // js pour le questionnaire
+
+    var socket = null;
+
+    var identificationId = +"<%= identificationId %>";
+
+    /**
+     *
+     * @param question
+     */
+    function afficherQuestion(question){
+        // Todo : afficher la nouvelle question
+    }
+
+    /**
+     *
+     */
+    function envoyerReponse(reponse){
+        // Todo : envoyer une réponse
+        socket.emit("answerQuestion", null);
+    }
+
+    $(function () {
+        // ------------------------------------------------------------------------------------------
+        // initialisation de la connexion
+        // ------------------------------------------------------------------------------------------
+
+        socket = io.connect();
+
+        socket.emit("identify", {"identificationId": identificationId});
+
+        socket.on('identifySuccess', function (data) {
+            // Connexion au questionnaire
+            console.log("Identification réussi");
+            socket.emit("connectToQuestioning", {"questionnaireId": questionnaireId, "motDePasse": motDePasse});
+        });
+
+        // ------------------------------------------------------------------------------------------
+
+
+
+        // Réception d'une nouvelle question
+        socket.on('newQuestion', function(data){
+            // Todo : récupérer la question
+            console.log("test new question");
+            afficherQuestion(null);
+        });
+
+        // Demande d'arret des réponses
+        socket.on('stopAnswerQuestion', function(data){
+            // Todo : afficher quelque chose car on ne peut plus répondre à la question
+            console.log("test stop question");
+        });
+
+        // Réception des résultats
+        socket.on('showResultQuestion', function(data){
+            // Todo : afficher les résultats
+            console.log("test stop question");
+        });
+
+        // Une erreur
+        socket.on('errors', function(data){
+            console.log("Erreur : " + data);
+        });
+
+        // Le serveur n'est plus joignable
+        socket.on('disconnect', function(data){
+            // Todo : afficher un message
+            console.log("test deconnecté");
+        });
+
+        // Serveur de retour joignable
+        socket.on('reconnect', function(data){
+            // Todo : afficher un message
+            console.log("test reconnect");
+            window.location.reload(true);
+        });
+    });
+</script>

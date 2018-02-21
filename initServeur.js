@@ -57,10 +57,20 @@ server.get('/attente', function(req, res) {
 });
 
 server.get('/:idObjet/Questionnaire', function(req, res) {
-  var params = {};
-  params.idObjet = req.params.idObjet;
-  params.nom = "idQuestionnaire";
-  res.render('Questionnaire.ejs', params);
+
+    // Todo : vérifier l'éxistence du questionnaire
+
+    var client = new Etudiant(); // Todo : récupérer le client connecté
+
+    var questionnaireId = req.params.idObjet;
+    var identificationId = Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
+
+    waitToIdentify[identificationId] = {"client": client, "questionnaireId": questionnaireId};
+
+    var params = {};
+    params.questionnaireId = questionnaireId;
+    params.identificationId = identificationId;
+    res.render('Questionnaire.ejs', params);
 });
 /*
 server.get('/:idObjet/Question', function(req, res) {
@@ -110,9 +120,12 @@ var io = sockets.listen(server.listen(666));
 // Ajoute des log à la console pour les tests
 var testMode = true;
 
+// Liste des clients en attente d'identification
+var waitToIdentify = [];
+
 // Liste des groupes connéctés
 // les clées sont les id des questionnaires
-// 1 groupe : [professeur, motDePasse, etudiants]
+// 1 groupe : [professeur, etudiants]
 var groups = [];
 
 // Nouvelle connexion
@@ -122,7 +135,7 @@ io.sockets.on("connection", function (socket){
     }
 
     // Le client lié à la socket
-    var client = new Client(socket);
+    var client = null;
 
     // L'id du questionnaire dans lequel l'utilisateur s'est connecté
     var questionnaireId = null;
@@ -132,45 +145,73 @@ io.sockets.on("connection", function (socket){
      * Transforme le client en étudiant ou professeur
      */
     socket.on('identify', function(data){
-        // Todo
-        if (testMode){
-            console.log("Un utilisateur s'est identifié");
-        }
 
-        socket.emit("connectionSuccess", null);
-    });
+        var identificationId = data.identificationId;
 
-    /**
-     * Connexion au questionnaire
-     *
-     * data : [questionnaireId, motDePasse]
-     */
-    socket.on('connectToQuestioning', function(data){
-        if (testMode){
-            console.log("Un utilisateur se connecte a un questionnaire");
-        }
+        if (identificationId in waitToIdentify){
 
-        if (client instanceof Professeur){
-            if (data["questionnaireId"] in groups){
-                // Si le prof se reconnect à un questionnaire
-                questionnaireId = data["questionnaireId"];
-                groups[questionnaireId]["professeur"] = client;
+            client = waitToIdentify[identificationId]["client"];
+            client.socket = socket;
 
-            }else{
-                // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
-                var questionnaire = Questionnaire.getById(data["questionnaireId"]);
+            questionnaireId = waitToIdentify[identificationId]["questionnaireId"];
 
-                questionnaireId = questionnaire.idQuestion;
-                groups[questionnaireId] = {"professeur": client, "motDePasse": questionnaire.motDePasse, "etudiants": []};
+            delete waitToIdentify[identificationId];
+
+            var connecte = false;
+
+            if (client instanceof Professeur){
+                if (questionnaireId in groups){
+                    // Si le prof se reconnect à un questionnaire
+                    groups[questionnaireId]["professeur"] = client;
+                    connecte = true;
+
+                }else{
+                    // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
+                    var questionnaire = Questionnaire.getById(questionnaireId);
+                    groups[questionnaireId] = {"professeur": client, "etudiants": []};
+                    connecte = true;
+                }
+
+            }else if (client instanceof Etudiant){
+                if (questionnaireId in groups){
+                    // Si le questionnaire est ouvert et que le mot de passe est bon
+                    groups[questionnaireId]["etudiants"].push(client);
+                    connecte = true;
+
+                    // Todo : envoyer notification au prof
+                }else{
+                    socket.emit("errors", "Le questionnaire n'a pas démarré");
+
+                    if (testMode){
+                        console.log("Un utilisateur n'a pas réussi à se connecter à un questionnaire");
+                    }
+                    return;
+                }
             }
 
-        }else if (client instanceof Etudiant){
-            if (data["questionnaireId"] in groups && groups[data["questionnaireId"]]["motDePasse"] === data["motDePasse"]){
-                // Si le questionnaire est ouvert et que le mot de passe est bon
-                questionnaireId = data["questionnaireId"];
-                groups[questionnaireId]["etudiants"].push(client);
+            if (connecte){
+                socket.emit("identifySuccess", null);
 
-                // Todo : envoyer notification au prof
+                if (testMode){
+                    if (client instanceof Professeur){
+                        console.log("Un professeur s'est identifié");
+                    }else{
+                        console.log("Un etudiant s'est identifié");
+                    }
+                }
+            }else{
+                socket.emit("errors", "Erreur de connexion");
+
+                if (testMode){
+                    console.log("Un utilisateur n'a pas réussi à s'identifier");
+                }
+            }
+
+        }else{
+            socket.emit("errors", "Erreur de connexion : identifiant invalide");
+
+            if (testMode){
+                console.log("Un utilisateur n'a pas réussi à s'identifier : identifiant invalide");
             }
         }
     });
@@ -186,14 +227,14 @@ io.sockets.on("connection", function (socket){
      * Client déconnecté
      */
     socket.on('disconnect', function(data){
-        if (testMode){
-            console.log("Un utilisateur c'est déconnecté");
-        }
-
-        if (questionnaireId != null){
+        if (client != null){
             // Si l'utilisateur était connecté à un questionnaire : on le déconnecte
             groups[questionnaireId]["etudiants"].remove(client);
             // Todo : envoyer notification au prof
+        }
+
+        if (testMode){
+            console.log("Un utilisateur s'est déconnecté");
         }
     });
 });

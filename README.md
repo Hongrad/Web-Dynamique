@@ -2,6 +2,14 @@
 
 -------------------------
 
+** Valentin Bouchet - 21/02 **
+
+Début des sockets :
+Récupération et identification du client connecté.
+Connexion du client au groupe du questionnaire.
+
+-------------------------
+
 ** Valentin Bouchet - 20/02 **
 
 Début des sockets : Initialisation de la connexion et mise en place des premières fonctions.
