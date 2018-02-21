@@ -8,7 +8,6 @@ var session = require('express-session');
 var path = require('path');
 var mysql = require('mysql');
 
-var EtudiantModule = require('./Classes/Etudiant.js');
 var Client = require('./Classes/Client.js');
 var Etudiant = require('./Classes/Etudiant');
 var Professeur = require('./Classes/Professeur');
@@ -85,7 +84,6 @@ connection.connect( function(err) {
   console.log("Connected!");
 });
 
-var etudiant = new EtudiantModule("","");
 var etudiant = new Etudiant("","");
 etudiant.getById(connection,2);
 
@@ -95,7 +93,6 @@ server.use('/img', express.static(path.join(__dirname + '/template/img')));
 server.use('/js', express.static(path.join(__dirname + '/template/js')));
 server.use('/Classes', express.static(path.join(__dirname + '/Classes')));
 
-server.listen(666);
 server.use(cookieParser());
 server.use(session({
     secret: "a secret key",
