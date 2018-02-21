@@ -21,39 +21,46 @@ var server = express();
 
 
 server.get('/', function(req, res) {
-  res.send(path.join((__dirname + '/Views/accueil.ejs')))
+    var params = {};
+    res.render('accueil.ejs', params);
 });
 server.get('/connexion', function(req, res) {
-  res.send(path.join((__dirname + '/Views/connexion.ejs')))
+    var params = {};
+    res.render('connexion.ejs', params);
 });
 server.get('/creerQuestionnaire', function(req, res) {
-  res.send(path.join((__dirname + '/Views/creerQuestionnaire.ejs')))
+    var params = {};
+    res.render('creerQuestionnaire.ejs', params);
 });
 
 // Les routes qui suivent seront à modifier, elles me servent à tester mes pages pour l'instant
 server.get('/question', function(req, res) {
-  res.send(path.join((__dirname + '/Views/question.ejs')))
+    var params = {};
+    res.render('question.ejs', params);
 });
 server.get('/reponse', function(req, res) {
-  res.send(path.join((__dirname + '/Views/reponse.ejs')))
+    var params = {};
+    res.render('reponse.ejs', params);
 });
 server.get('/attente', function(req, res) {
-  res.send(path.join((__dirname + '/Views/attente.ejs')))
+    var params = {};
+    res.render('attente.ejs', params);
 });
 server.get('/finQuestion', function(req, res) {
-  res.send(path.join((__dirname + '/Views/finQuestion.ejs')))
+    var params = {};
+    res.render('finQuestion.ejs', params);
 });
 server.get('/listeParticipants', function(req, res) {
-  res.send(path.join((__dirname + '/Views/listeParticipants.ejs')))
+    var params = {};
+    res.render('listeParticipants.ejs', params);
 });
 server.get('/questionnaires', function(req, res) {
-  res.send(path.join((__dirname + '/Views/questionnaires.ejs')))
+    var params = {};
+    res.render('questionnaires.ejs', params);
 });
 server.get('/questionnaire', function(req, res) {
-  res.send(path.join((__dirname + '/Views/previewQuestionnaire.ejs')))
-});
-server.get('/attente', function(req, res) {
-  res.send(path.join((__dirname + '/Views/attente.ejs')))
+    var params = {};
+    res.render('previewQuestionnaire.ejs', params);
 });
 
 // Acceder au questionnaire
@@ -231,7 +238,8 @@ io.sockets.on("connection", function (socket){
     socket.on('disconnect', function(data){
         if (client != null){
             // Si l'utilisateur était connecté à un questionnaire : on le déconnecte
-            groups[questionnaireId]["etudiants"].remove(client);
+            // Todo
+            //groups[questionnaireId]["etudiants"].remove(client);
             // Todo : envoyer notification au prof
         }
 
