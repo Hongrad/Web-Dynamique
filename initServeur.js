@@ -22,39 +22,39 @@ var server = express();
 
 
 server.get('/', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/accueil.html')))
+  res.send(path.join((__dirname + '/Views/accueil.ejs')))
 });
 server.get('/connexion', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/connexion.html')))
+  res.send(path.join((__dirname + '/Views/connexion.ejs')))
 });
 server.get('/creerQuestionnaire', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/creerQuestionnaire.html')))
+  res.send(path.join((__dirname + '/Views/creerQuestionnaire.ejs')))
 });
 
 // Les routes qui suivent seront à modifier, elles me servent à tester mes pages pour l'instant
 server.get('/question', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/question.html')))
+  res.send(path.join((__dirname + '/Views/question.ejs')))
 });
 server.get('/reponse', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/reponse.html')))
+  res.send(path.join((__dirname + '/Views/reponse.ejs')))
 });
 server.get('/attente', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/attente.html')))
+  res.send(path.join((__dirname + '/Views/attente.ejs')))
 });
 server.get('/finQuestion', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/finQuestion.html')))
+  res.send(path.join((__dirname + '/Views/finQuestion.ejs')))
 });
 server.get('/listeParticipants', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/listeParticipants.html')))
+  res.send(path.join((__dirname + '/Views/listeParticipants.ejs')))
 });
 server.get('/questionnaires', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/questionnaires.html')))
+  res.send(path.join((__dirname + '/Views/questionnaires.ejs')))
 });
 server.get('/questionnaire', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/previewQuestionnaire.html')))
+  res.send(path.join((__dirname + '/Views/previewQuestionnaire.ejs')))
 });
 server.get('/attente', function(req, res) {
-  res.sendFile(path.join((__dirname + '/template/attente.html')))
+  res.send(path.join((__dirname + '/Views/attente.ejs')))
 });
 
 server.get('/:idObjet/Questionnaire', function(req, res) {
@@ -104,7 +104,7 @@ server.use(session({
     saveUninitialized: false
 }));
 
-var io = sockets.listen(server.listen(666));
+var io = sockets.listen(server.listen(7800));
 
 // -----------------------------------------------------------------------------
 // socket

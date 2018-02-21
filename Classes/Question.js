@@ -3,8 +3,8 @@
  */
 class Question {
 
-    static _nbReponse = 4;
-    
+    //static _nbReponse = 4;
+
     /**
      *
      * @param idQuestion
