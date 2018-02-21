@@ -1,6 +1,6 @@
 {
 "http" :  {
-"index": "accueil.html",
+"index": "accueil.ejs",
 "port": 69,
 "www": "./www/",
 "mime": {

@@ -2,11 +2,10 @@
  * Une Question
  */
 class Question {
-
+  
     static get nbReponse() {
         return 4;
     }
-    
     /**
      *
      * @param idQuestion
