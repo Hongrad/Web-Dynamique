@@ -8,6 +8,8 @@
 
   <!-- Feuille de style -->
   <link type="text/css" href="css/style.css" rel="stylesheet" />
+  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="js/script.js"></script>
 </head>
 <body>
   <header>
@@ -24,24 +26,14 @@
           <li>Réponse 1 : <input type="text" id="" placeholder=""/></li>
           <li>Réponse 2 : <input type="text" id="" placeholder=""/></li>
           <li>Réponse 3 : <input type="text" id="" placeholder=""/></li>
-          <button>+</button> Ajouter une possibilité
+          <li>Réponse 4 : <input type="text" id="" placeholder=""/></li>
         </ul>
     </div>
-    <div class="creerQ-question">
-      <p class="titreQuestion">Question 2 / <input type="text" id="titreQuestion" placeholder="Titre de la question"/></p>
-        <ul>
-          <li>Réponse 1 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 2 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 3 : <input type="text" id="" placeholder=""/></li>
-          <button>+</button> Ajouter une possibilité
-        </ul>
-    </div>
-      <div class="creerQ-question questionnaires-bloc ajouter-questionnaire">
-        <span style="display:flex;"><button>+</button></span>
-        <p class="questionnaires-bloc-titre" style="margin-bottom: 0;">Ajouter une question</p>
-      </div>
   </div>
-  <button> Enregitrer </button>
+  <div class="formLog">
+      <button class="rounded-button questionnaire-button" onclick="addQuestionHTML();">Ajouter une question</button>
+      <button class="rounded-button questionnaire-button">Enregistrer le Questionnaire</button>
+  </div>
 </body>
 
 </html>

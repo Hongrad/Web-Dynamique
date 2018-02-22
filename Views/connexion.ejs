@@ -15,15 +15,22 @@
   </header>
   <div class="content">
     <div class="connexion-form">
-        <h3>Accès questionnaires</h3>
-        <legend>Connexion :</legend>
-        <input type="text" name="login" id="login" placeholder="Entrez votre Identifiant"/>
-        <input type="password" name="password" id="password" placeholder="Mot de passe"/>
+        <div class="formLog">
+            <h3>Accès questionnaires</h3>
+            <input type="text" name="login" class="rounded-input" placeholder="Indentifiant"/>
+            <input type="password" name="password" class="rounded-input" placeholder="Mot de passe"/>
+            <button class="rounded-button">Connexion</button><button class="rounded-button">Enregistrer</button>
+        </div>
+        <!--<input type="text" name="login" id="login" placeholder="Entrez votre Identifiant"/>
+        <input type="password" name="password" id="password" placeholder="Mot de passe"/>-->
     </div>
     <div class="connexion-form">
-        <h3>Participer à un questionnaire</h3>
-        <input type="text" name="pseudo" id="pseudo" placeholder="Entrez votre prénom"/>
-        <input type="text" name="pin" id="pin" placeholder="Entrez le code PIN"/>
+        <div class="formLog">
+            <h3>Participer à un questionnaire</h3>
+            <input type="text" name="pseudo" class="rounded-input" placeholder="Nom"/>
+            <input type="text" name="pin" class="rounded-input" placeholder="Pin du questionnaire"/>
+            <button class="rounded-button">Connexion</button>
+        </div>
     </div>
   </div>
 </body>

@@ -326,3 +326,48 @@ input#titreQuestionnaire{
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
 }
+
+.rounded-input, .rounded-button {
+		border: none;
+		border-radius: 25px;
+		padding: 10px 25px;
+		font-size: 1em;
+		text-transform: uppercase;
+		font-family: 'Open Sans', sans-serif;
+		text-align: center;
+		margin: 10px;
+		transition: all 0.3s linear;
+		opacity: 0.6;
+}
+.rounded-input {
+	  font-weight: 300;
+	  background-color: #6a72fe;
+	  mix-blend-mode: overlay;
+}
+.rounded-input:hover {
+	  transition: all 0.3s linear;
+	  opacity: 1;
+}
+.rounded-input:focus {
+	  transition: all 0.3s linear;
+	  opacity: 1;
+}
+.rounded-input::placeholder {
+	color:#fff;
+}
+.rounded-button {
+		font-weight: 700;
+		background: #8f4bff;
+		color: #fff;
+		cursor: pointer;
+}
+.rounded-button:hover {
+	  opacity: 1;
+}
+.formLog {
+	text-align: center;
+}
+.questionnaire-button {
+	background: #fff;
+	color: #6b70fe;
+}
