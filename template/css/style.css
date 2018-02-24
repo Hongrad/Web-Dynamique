@@ -22,26 +22,40 @@ html{
   height: 100%;
   background:linear-gradient(#2cb2fd, #9248ff);
 }
-
 body{
     font-size: 16px;
     font-family: 'Anaheim', sans-serif;
     color: #fff;
-		height: 95%;
-		background-image: url('/img/forme-1.png'),url('/img/forme-2.png'),url('/img/forme-3.png');
-		background-repeat: no-repeat, no-repeat, no-repeat;
-		background-position: 10% 65%, 80% -10%, 103% 106%;
-		background-size: 35%,42%,32%;
+		height: 100%;
+		margin: 0;
+		background-image: url('/img/lesformes.png');
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 80%;
+}
+#accueil{
+	background-image: url('/img/lesformes.png'),url('/img/point-trait.png');
+	background-repeat: no-repeat, no-repeat;
+	background-position: center,center;
+	background-size: 80%,80%;
 }
 h1,h2,h3,h4,h5,.roboto{
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
 }
+h1{
+	font-size: 70px;
+}
 .h3{
 	font-size: 22px;
 	font-weight: bold;
 }
-
+a{
+	text-decoration: none;
+}
+button{
+	cursor: pointer;
+}
 input{
 	border: none;
 }
@@ -63,6 +77,12 @@ ul{
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+}
+.centre{
+	text-align: center;
+}
+.right{
+	float: right;
 }
 button{
   background-color: #008cff;
@@ -105,6 +125,7 @@ button{
   font-size: 20px;
 }
 .logo{
+	margin: 15px 0 0 15px;
 	 max-width: 125px;
 }
 
@@ -125,6 +146,18 @@ button{
   border: none;
   background-color: rgba(255, 255, 255, 0.2);
   font-weight: 600;
+}
+.connexion-entete{
+	background: #fff;
+	width: 60%;
+	margin: auto;
+	margin-bottom: 40px;
+	border-radius: 50px;
+	color: #008cff;
+}
+.connexion-entete h2{
+	margin: 0;
+	padding: 10px 0;
 }
 
 /*** Page créer un questionnaire ***/
@@ -201,11 +234,13 @@ input#titreQuestionnaire{
 	color: #ffffff;
 	margin-bottom: 0;
 }
+.ajouter-questionnaire a {
+	margin: auto;
+}
 .ajouter-questionnaire button {
 	font-size: 50px;
 	padding: 0px 14px 5px 14px;
 	background-color: #7a5fff;
-	margin: auto;
 }
 
 /*** Page d'attente ***/
@@ -245,9 +280,15 @@ input#titreQuestionnaire{
 	margin: 50px;
 	width: 50%
 }
+#particpants-PIN input{
+	background: transparent;
+}
 #particpants-PIN, #particpants-lancer, #particpants-retour, #particpants-modifier{
 	text-align: center;
 	padding: 20px;
+}
+#particpants-lancer, #particpants-retour, #particpants-modifier{
+	cursor: pointer;
 }
 #particpants-lancer{
 	margin: 30px 0px;
@@ -255,10 +296,33 @@ input#titreQuestionnaire{
 #particpants-retour, #particpants-modifier{
 	width: 50%;
 }
+#particpants-retour{
+	margin-right: 50px;
+}
+#nbParticipants{
+	font-size: 20px;
+	float: right;
+	vertical-align: bottom;
+}
 
-
-
-
+/*** Page finQuestion ***/
+#finQuestion{
+	margin: auto;
+}
+#finQuestion a{
+	color: #fff;
+}
+#finQuestion a:hover{
+	text-decoration: none;
+	color: #fff;
+}
+#finQuestion img{
+	width: 100px;
+}
+#finQuestion p{
+	font-size: 35px;
+	margin: 0;
+}
 
 
 
@@ -352,7 +416,7 @@ input#titreQuestionnaire{
 	  transition: all 0.3s linear;
 	  opacity: 1;
 }
-.rounded-input::placeholder {
+.rounded-input::placeholder{
 	color:#fff;
 }
 .rounded-button {
@@ -379,4 +443,24 @@ input#titreQuestionnaire{
 }
 input:focus, input:active, button:focus, button:active {
   outline: 0 !important;
+
+
+/*** Page Reponse & Question***/
+.reponse,.question{
+	margin-left: 15%;
+	width: 50%;
+}
+.reponse p{
+	width: 70%;
+	font-size: 25px;
+}
+.reponse button,.question button{
+	float: right;
+}
+.question h2{
+	font-size: 40px;
+}
+.question .container{
+	font-size: 25px !important;
+
 }
