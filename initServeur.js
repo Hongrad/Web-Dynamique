@@ -120,7 +120,7 @@ server.use(session({
     saveUninitialized: false
 }));
 
-var io = sockets.listen(server.listen(7800));
+var io = sockets.listen(server.listen(6900));
 
 // -----------------------------------------------------------------------------
 // socket
