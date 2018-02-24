@@ -11,19 +11,54 @@
     var identificationId = +"<%= identificationId %>";
 
     /**
+     * En attente de la prochaine question
+     */
+    function afficherAttente(){
+        // Todo : afficher attente
+        console.log("attente ...")
+    }
+
+    /**
      *
      * @param question
      */
     function afficherQuestion(question){
         // Todo : afficher la nouvelle question
+        console.log("afficher question");
     }
 
     /**
      *
+     * @param resultat
+     */
+    function afficherResultat(resultat){
+        // Todo : afficher les résultats
+        console.log("afficher resultat");
+    }
+
+    /**
+     *
+     * @param reponse
      */
     function envoyerReponse(reponse){
         // Todo : envoyer une réponse
-        socket.emit("answerQuestion", null);
+        socket.emit("answerQuestion", reponse);
+    }
+
+    /**
+     * Demande à passer à la question suivant
+     */
+    function questionSuivante(){
+        var relancer = true; // vraie si il faut relancer la meme question
+
+        socket.emit("nextQuestion", relancer);
+    }
+
+    /**
+     * Demande à arreter les réponses
+     */
+    function stopReponse(){
+        socket.emit("stopAnswerQuestion", null);
     }
 
     $(function () {
@@ -36,20 +71,29 @@
         socket.emit("identify", {"identificationId": identificationId});
 
         socket.on('identifySuccess', function (data) {
-            // Connexion au questionnaire
             console.log("Identification réussi");
-            socket.emit("connectToQuestioning", {"questionnaireId": questionnaireId, "motDePasse": motDePasse});
+            afficherAttente();
         });
 
         // ------------------------------------------------------------------------------------------
 
 
+        // Un nouvelle étudiant s'est connecté
+        socket.on('newUser', function(data){
+            // Todo : afficher un truc
+            console.log("Nouvelle connexion : " + data);
+        });
+
+        // Un étudiant s'est déconnecté
+        socket.on('userDisconnected', function(data){
+            // Todo : afficher un truc
+            console.log("Utilisateur déconnecté : " + data);
+        });
 
         // Réception d'une nouvelle question
         socket.on('newQuestion', function(data){
-            // Todo : récupérer la question
-            console.log("test new question");
-            afficherQuestion(null);
+            var question = data;
+            afficherQuestion(question);
         });
 
         // Demande d'arret des réponses
@@ -60,13 +104,14 @@
 
         // Réception des résultats
         socket.on('showResultQuestion', function(data){
-            // Todo : afficher les résultats
-            console.log("test stop question");
+            var resultat = data;
+            afficherResultat(resultat);
         });
 
         // Une erreur
         socket.on('errors', function(data){
             console.log("Erreur : " + data);
+            alert("Erreur : \n" + data);
         });
 
         // Le serveur n'est plus joignable
