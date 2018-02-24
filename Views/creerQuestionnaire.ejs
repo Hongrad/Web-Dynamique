@@ -24,15 +24,17 @@
           buttons: {
             "Valider": {
                 click: function () {
-                    var questions = $(".creerQ-question");
-                    for(var q : questions) {
-                      var inputs = q.find("input");
-                      for(var i : inputs) {
-                        var responses;
-                        if(i.id()=="titreQuestion") {var title = i.value();}
-                        else {respones }
-                      }
-                    }
+                  var questions = $(".creerQ-question");
+                  questions.each(function(index){
+                      var inputs = $(this).find("input");
+                      inputs.each(function(index2){
+                          if(index2==0) {
+                              console.log("titre "+$(this).val());
+                          } else {
+                              console.log("reponse "+$(this).val());
+                          }
+                      });
+                  });
                 },
                 text: 'Valider',
                 class: 'rounded-button rounded-buttonValid'
@@ -51,7 +53,7 @@
         });
       } );
       function showModalConfirm() {
-        $("#dialog-confirm").dialog( "open" );;
+        $("#dialog-confirm").dialog( "open" );
       }
   </script>
 </head>
@@ -65,12 +67,12 @@
         <h3>Créez votre questionnaire : <input type="text" id="titreQuestionnaire" placeholder="Insérez votre titre"/></h3>
     </div>
     <div class="creerQ-question">
-      <p class="titreQuestion">Question 1 / <input type="text" id="titreQuestion" placeholder="Titre de la question"/></p>
+      <p class="titreQuestion">Question 1 / <input type="text" placeholder="Titre de la question"/><label>Multiple ?<input type="checkbox" onChange="updateQuestionType(this);"/></label></p>
         <ul>
-          <li>Réponse 1 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 2 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 3 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 4 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 1 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 2 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 3 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 4 : <input type="text" id="" placeholder=""/></li>
         </ul>
     </div>
   </div>
