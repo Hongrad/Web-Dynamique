@@ -7,9 +7,53 @@
   <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
 
   <!-- Feuille de style -->
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link type="text/css" href="css/style.css" rel="stylesheet" />
   <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
   <script type="text/javascript" src="js/script.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+  <script>
+      $( function() {
+        $( "#dialog-confirm" ).dialog({
+          autoOpen: false,
+          resizable: false,
+          height: "auto",
+          width: 400,
+          modal: true,
+          buttons: {
+            "Valider": {
+                click: function () {
+                    var questions = $(".creerQ-question");
+                    for(var q : questions) {
+                      var inputs = q.find("input");
+                      for(var i : inputs) {
+                        var responses;
+                        if(i.id()=="titreQuestion") {var title = i.value();}
+                        else {respones }
+                      }
+                    }
+                },
+                text: 'Valider',
+                class: 'rounded-button rounded-buttonValid'
+            },
+            "Annuler": {
+                click: function () {
+                    $( this ).dialog( "close" );
+                },
+                text: 'Annuler',
+                class: 'rounded-button rounded-buttonCancel'
+            }
+          },
+          open: function(event, ui) {
+              $("button").blur();
+          }
+        });
+      } );
+      function showModalConfirm() {
+        $("#dialog-confirm").dialog( "open" );;
+      }
+  </script>
 </head>
 <body>
   <header>
@@ -32,7 +76,14 @@
   </div>
   <div class="formLog">
       <button class="rounded-button questionnaire-button" onclick="addQuestionHTML();">Ajouter une question</button>
-      <button class="rounded-button questionnaire-button">Enregistrer le Questionnaire</button>
+      <button class="rounded-button questionnaire-button" onclick="showModalConfirm();">Enregistrer le Questionnaire</button>
+  </div>
+
+  <div id="dialog-confirm" title="Terminer le questionnaire?" hidden>
+      <p>
+          <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+          Le questionnaire ne pourra plus être modifier. Etes vous sur de le valider ?
+      </p>
   </div>
 </body>
 

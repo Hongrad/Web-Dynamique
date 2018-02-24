@@ -435,6 +435,15 @@ input#titreQuestionnaire{
 	background: #fff;
 	color: #6b70fe;
 }
+.rounded-buttonValid {
+	background-color: #79BD9A;
+}
+.rounded-buttonCancel {
+	background-color: #B24049;
+}
+input:focus, input:active, button:focus, button:active {
+  outline: 0 !important;
+
 
 /*** Page Reponse & Question***/
 .reponse,.question{
@@ -453,4 +462,5 @@ input#titreQuestionnaire{
 }
 .question .container{
 	font-size: 25px !important;
+
 }
