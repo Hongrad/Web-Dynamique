@@ -13,7 +13,7 @@ class Questionnaire {
      */
     constructor(motDePasse, questions, idProfesseur) {
         this._idQuestionnaire = -1;
-        this._pid = generatePid();
+        this._pid = Questionnaire.generatePid();
         this._motDePasse = motDePasse;
         this._questions = questions;
         this._idProfesseur = idProfesseur;
@@ -30,6 +30,10 @@ class Questionnaire {
 
     generatePid() {
         this.pid = Math.floor(Math.random() * 100001);
+    }
+
+    static generatePid(){
+        return Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
     }
 
     // ------------------------------------------------------------------------------

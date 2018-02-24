@@ -69,7 +69,7 @@ server.get('/:idObjet/Questionnaire', function(req, res) {
     // Todo : vérifier l'éxistence du questionnaire
     // Todo : vérifier que l'utilisateur est connecté
 
-    var client = new Etudiant(); // Todo : récupérer le client connecté
+    var client = new Professeur(); // Todo : récupérer le client connecté
 
     var questionnaireId = req.params.idObjet;
     var identificationId = Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
@@ -134,7 +134,7 @@ var waitToIdentify = [];
 
 // Liste des groupes connéctés
 // les clées sont les id des questionnaires
-// 1 groupe : [professeur, etudiants]
+// 1 groupe : [professeur, etudiants, questionActuelle]
 var groups = [];
 
 // Nouvelle connexion
@@ -176,20 +176,20 @@ io.sockets.on("connection", function (socket){
 
                 }else{
                     // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
-                    var questionnaire = Questionnaire.getById(questionnaireId);
-                    groups[questionnaireId] = {"professeur": client, "etudiants": []};
+                    var questionnaire = new Questionnaire(); // Todo : récupérer le questionnaire
+                    groups[questionnaireId] = {"professeur": client, "etudiants": [], "questionActuelle": null};
                     connecte = true;
                 }
 
             }else if (client instanceof Etudiant){
                 if (questionnaireId in groups){
-                    // Si le questionnaire est ouvert et que le mot de passe est bon
+                    // Si le questionnaire est ouvert
                     groups[questionnaireId]["etudiants"].push(client);
                     connecte = true;
 
-                    // Todo : envoyer notification au prof
+                    groups[questionnaireId]["professeur"].socket.emit("newUser", client.nom + " " + client.prenom);
                 }else{
-                    socket.emit("errors", "Le questionnaire n'a pas démarré");
+                    socket.emit("errors", "Le questionnaire n'a pas encore démarré");
 
                     if (testMode){
                         console.log("Un utilisateur n'a pas réussi à se connecter à un questionnaire");
@@ -200,6 +200,10 @@ io.sockets.on("connection", function (socket){
 
             if (connecte){
                 socket.emit("identifySuccess", null);
+
+                if (groups[questionnaireId]["questionActuelle"] != null){
+                    socket.emit("newQuestion", groups[questionnaireId]["questionActuelle"]);
+                }
 
                 if (testMode){
                     if (client instanceof Professeur){
@@ -229,18 +233,79 @@ io.sockets.on("connection", function (socket){
      * Un étudiant répond à une question
      */
     socket.on('answerQuestion', function(data){
-        // Todo
+        var reponse = data;
+
+        //Todo : enregistrer la réponse
+
+        if (testMode){
+            console.log("Un étudiant à répondu à une question");
+        }
     });
+
+    /**
+     * Un professeur demande a passer à la question suivante
+     * si data == true : relancer la meme question
+     */
+    socket.on('nextQuestion', function(data){
+        if (client instanceof Professeur && questionnaireId in groups){
+
+            question = groups[questionnaireId]["questionActuelle"];
+
+            if (data == false){
+                var question = new Question(); // Todo : récupérer prochaine question
+                groups[questionnaireId]["questionActuelle"] = question;
+            }
+
+
+            for (var i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
+                groups[questionnaireId]["etudiants"][i].socket.emit("newQuestion", question);
+            }
+            groups[questionnaireId]["professeur"].socket.emit("newQuestion", question);
+
+            if (testMode){
+                console.log("Un professeur a demander a passer à la question suivante");
+            }
+        }
+    });
+
+    /**
+     * Un professeur demande a arreter les réponses
+     */
+    socket.on('stopAnswerQuestion', function(data){
+        if (client instanceof Professeur && questionnaireId in groups){
+
+            groups[questionnaireId]["questionActuelle"] = null;
+
+            for (var i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
+                groups[questionnaireId]["etudiants"][i].socket.emit("stopAnswerQuestion");
+            }
+
+            var results = null; // Todo : récuperer les résultats
+
+            groups[questionnaireId]["professeur"].socket.emit("showResultQuestion", results);
+
+            if (testMode){
+                console.log("Un professeur a demander d'arreter les réponses");
+            }
+        }
+    });
+
 
     /**
      * Client déconnecté
      */
     socket.on('disconnect', function(data){
-        if (client != null){
+        if (client != null && questionnaireId in groups){
             // Si l'utilisateur était connecté à un questionnaire : on le déconnecte
-            // Todo
-            //groups[questionnaireId]["etudiants"].remove(client);
-            // Todo : envoyer notification au prof
+
+            if (client instanceof Professeur){
+                // Todo : ? supprimer le questionnaire ?
+
+            }else if (client instanceof Etudiant){
+                groups[questionnaireId]["etudiants"].remove(client);
+
+                groups[questionnaireId]["professeur"].socket.emit("userDisconnected", client.nom + " " + client.prenom);
+            }
         }
 
         if (testMode){
