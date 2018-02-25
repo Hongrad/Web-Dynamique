@@ -59,10 +59,18 @@ class Question {
      * @param id
      * @returns {Etudiant}
      */
-    static getById(db,id) {
+    static getById(db, id, callback) {
       db.query("SELECT * FROM question WHERE idQuestion=?", [id], function (err, result) {
           if (err) throw err;
-          //TODO voir getById Etudiant
+
+          var question = null;
+
+          if (result.length > 0){
+              question = new Question(result[0].libelle, result[0].multiple, JSON.parse(result[0].reponses));
+              question.idQuestion = result[0].idQuestion;
+          }
+
+          return callback(question);
       });
     }
 

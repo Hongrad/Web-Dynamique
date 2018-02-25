@@ -60,10 +60,18 @@ class Questionnaire {
      * @param id
      * @returns {Etudiant}
      */
-    static getById(db,id) {
+    static getById(db, id, callback) {
       db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
           if (err) throw err;
-          //TODO voir getById Etudiant
+
+          var questionnaire = null;
+
+          if (result.length > 0){
+              questionnaire = new Questionnaire(result[0].motDePasse, JSON.parse(result[0].questions), result[0].idProfesseur);
+              questionnaire.idQuestionnaire = result[0].idQuestion;
+          }
+
+          return callback(questionnaire);
       });
     }
 
