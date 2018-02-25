@@ -1,48 +1,113 @@
-<p>Questionnaire n°<%= questionnaireId %></p>
+<html id="attente">
+<head>
+    <title>Patientez</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
+
+    <!-- Feuille de style -->
+    <link type="text/css" href="/css/style.css" rel="stylesheet" />
+</head>
+<body>
+<header>
+    <a href="/" class="titre"><img class="logo" src="/img/logobleu.png" alt="logo du site" /></a>
+</header>
+<div id="content">
+    <img src="/img/chargement.png" alt="image de chargement" class=""/>
+    <p>Veuillez patientez</p>
+    <p>Connexion en cours...</p>
+</div>
+</body>
 
 <script src="/js/jquery-3.3.1.min.js" type="text/javascript"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="/Classes/Questionnaire.js" type="text/javascript"></script>
 <script>
     // js pour le questionnaire
 
     var socket = null;
 
     var identificationId = +"<%= identificationId %>";
+    var isProf = +"<%= isProf %>";
+
+    var question = null;
 
     /**
      * En attente de la prochaine question
      */
     function afficherAttente(){
-        // Todo : afficher attente
+
+        $("#content").html(`
+            <div class="">
+                <img src="/img/chargement.png" alt="image de chargement" class=""/>
+                <p>Veuillez patientez</p>
+                <p>Prochaine question dans quelques instants ...</p>
+            </div>`);
+
         console.log("attente ...")
     }
 
     /**
      *
-     * @param question
      */
-    function afficherQuestion(question){
-        // Todo : afficher la nouvelle question
+    function afficherQuestion(){
+
+        var type = "radio"
+        if (question._multiple == true){
+            type = "checkbox";
+        }
+
+        var htmlReponse = ``;
+        for (reponse of question._reponses){
+            htmlReponse += `
+                <label class="container">${reponse._libelle}
+                    <input name="reponseId" type="${type}" value="${reponse._idReponse}">
+                    <span class="checkmark"></span>
+                </label>`
+        }
+
+        $("#content").html(`
+            <div class="question">
+                <h2>Question : ${question._libelle}</h2>
+                ${htmlReponse}
+                <button class="button-type2" onclick="this.disabled = true; envoyerReponse();">Valider</button>
+            </div>`);
+
         console.log("afficher question");
     }
 
     /**
      *
-     * @param resultat
+     * @param resultats
      */
-    function afficherResultat(resultat){
-        // Todo : afficher les résultats
+    function afficherResultat(resultats){
+
+        var htmlReponse = ``;
+        for (reponse of question._reponses){
+            htmlReponse += `
+                <p class="container">${reponse._libelle} : ${resultats[reponse._idReponse]}</p>`
+        }
+
+        $("#content").html(`
+            <div class="question">
+                <h2>Question : ${question._libelle}</h2>
+                ${htmlReponse}
+            </div>`);
+
         console.log("afficher resultat");
     }
 
     /**
      *
-     * @param reponse
      */
-    function envoyerReponse(reponse){
-        // Todo : envoyer une réponse
-        socket.emit("answerQuestion", reponse);
+    function envoyerReponse(){
+        var reponsesId = [];
+
+        $("input[name='reponseId']").each(function () {
+            reponsesId.push($(this).attr("value"));
+        });
+
+        socket.emit("answerQuestion", reponsesId);
     }
 
     /**
@@ -51,7 +116,7 @@
     function questionSuivante(){
         var relancer = true; // vraie si il faut relancer la meme question
 
-        socket.emit("nextQuestion", relancer);
+        socket.emit("nextQuestion", false);
     }
 
     /**
@@ -92,8 +157,8 @@
 
         // Réception d'une nouvelle question
         socket.on('newQuestion', function(data){
-            var question = data;
-            afficherQuestion(question);
+            question = data;
+            afficherQuestion();
         });
 
         // Demande d'arret des réponses
@@ -104,8 +169,8 @@
 
         // Réception des résultats
         socket.on('showResultQuestion', function(data){
-            var resultat = data;
-            afficherResultat(resultat);
+            var resultats = data;
+            afficherResultat(resultats);
         });
 
         // Une erreur
@@ -128,3 +193,4 @@
         });
     });
 </script>
+</html>
