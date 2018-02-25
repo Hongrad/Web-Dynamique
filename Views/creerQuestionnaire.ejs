@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
 
   <!-- Feuille de style -->
-  
+
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link type="text/css" href="css/style.css" rel="stylesheet" />
   <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
@@ -26,13 +26,23 @@
                 click: function () {
                   var questions = $(".creerQ-question");
                   questions.each(function(index){
-                      var inputs = $(this).find("input");
-                      inputs.each(function(index2){
-                          if(index2==0) {
-                              console.log("titre "+$(this).val());
+                      //var question = new Question();
+                      var multiple;
+                      var titre;
+                      var reponses;
+                      var inputsQue = $(this).find("p").find("input");
+                      inputsQue.each(function(indexQ){
+                          if(indexQ==0) {
+                              titreQ = $(this).val();
                           } else {
-                              console.log("reponse "+$(this).val());
+                              multiple = this.checked;
                           }
+                      });
+                      var inputsRep = $(this).find("ul").find("li");console.log(inputsRep);
+                      inputsRep.each(function(indexRep){
+                              /*var reponse = new Reponse();
+                              reponse.libelle($(this).next().val());
+                              reponse.estLaReponse(this.checked);*/console.log($(this).children().first()[0].checked);console.log($(this).children().last().val());
                       });
                   });
                 },
