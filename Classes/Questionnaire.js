@@ -46,10 +46,16 @@ class Questionnaire {
      * @returns {boolean} true si succes
      */
     createInDB(db,questionnaire) {
-      db.query("INSERT INTO questionnaire (pid,motDePasse,titre,idProfesseur) VALUES (?,?,?,?)", [questionnaire._pid,questionnaire._motDePasse,questionnaire._titre,questionnaire._idProfesseur], function (err, result) {
-          if (err) throw err;
-          else {return result;}
-      });
+      return new Promise((resolve, reject) => {
+        db.query("INSERT INTO questionnaire (pid,motDePasse,titre,idProfesseur) VALUES (?,?,?,?)", [questionnaire._pid,questionnaire._motDePasse,questionnaire._titre,questionnaire._idProfesseur], function (err, result) {
+          if (err) {
+              return reject(err);
+            }
+            else {
+              resolve(result.insertId); //on retourne l'id de l'élément inséré
+            }
+        });
+    });
     }
 
     /**

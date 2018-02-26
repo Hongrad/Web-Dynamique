@@ -14,12 +14,10 @@ class Question {
      * @param idQuestionnaire
      * @param reponses
      */
-    constructor(libelle, multiple, idQuestionnaire, reponses) {
-        this._idQuestion = -1;
+    constructor(libelle, multiple, idQuestionnaire) {
         this._libelle = libelle;
         this._multiple = multiple;
         this._idQuestionnaire = idQuestionnaire;
-        this._reponses = reponses;
     }
 
     /**
@@ -47,11 +45,18 @@ class Question {
      * @param db
      * @returns {boolean} true si succes
      */
-    createInDB(db) {
-      db.query("INSERT INTO question (libelle,multiple,idQuestionnaire) VALUES (?,?,?)", [this._libelle,this._multiple,this._idQuestionnaire], function (err, result) {
-          if (err) throw err;
-          console.log(result);
-      });
+    createInDB(db,question,numRep) {
+      return new Promise((resolve, reject) => {
+        db.query("INSERT INTO question (libelle,multiple,idQuestionnaire) VALUES (?,?,?)", [question._libelle,question._multiple,question._idQuestionnaire], function (err, result) {
+          if (err) {
+              return reject(err);
+            }
+            else {
+              var array = [result.insertId,numRep];
+							resolve(array); //Tout c'est bien passé, on retourne l'id de l'élément inséré
+            }
+        });
+    });
     }
 
     /**

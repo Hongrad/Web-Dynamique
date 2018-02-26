@@ -87,39 +87,34 @@ server.get('/:idObjet/Questionnaire', function(req, res) {
 });
 
 server.post('/newQuestionnaire', jsonParser, function(req, res){
-	var obj = {};
-  wait.launchFiber(createQuestionnaire,req,res);
-  //res.send(req);
-});
-function createQuestionnaire (req,res) {
-  console.log("createQuestionnaire");
-  var res = wait.for(addQuestionnaire,req.body);console.log("createQuestionnaire2");
-  for(var index in req.body) {
-    if(index!="titreQuestionnaire") {
-      console.log("in"+res);console.log(res);
-      var res2 = wait.for(addQuestions,req.body,index,res["insertId"]);
-      for(var index3 in req.body[index]["reponses"]) {
-        var reponse = new Reponse();
-        reponse.libelle = req.body[index]["reponses"][index3]["libelle"];
-        reponse.estLaReponse = req.body[index]["reponses"][index3]["estLaReponse"];
-        reponse.idQuestion = res2["insertId"];
-        var res3 = question.createInDB(connection);
+  var questionnaire = new Questionnaire("123",req.body["titreQuestionnaire"],1);
+  var resQuestionnaire = questionnaire.createInDB(connection,questionnaire);
+  resQuestionnaire.then(function(result) {
+    //Si l'insertion s'est bien passée
+    if (result) {
+      var idQuestionnaire = result;
+      for(var index in req.body) {
+        if(index!="titreQuestionnaire") {
+          var question = new Question(req.body[index]["libelle"],req.body[index]["multiple"],idQuestionnaire);
+          var resQuestion = question.createInDB(connection,question,index);
+          resQuestion.then(function(result2) {
+            //Si l'insertion s'est bien passée
+            if (result2) {
+              var idQuestion = result2[0];
+              var numRep = result2[1];
+              for(var index2 in req.body[numRep]["reponses"]) {
+                var reponse = new Reponse(req.body[numRep]["reponses"][index2]["libelle"],req.body[numRep]["reponses"][index2]["estLaReponse"],idQuestion);
+                var resReponse = reponse.createInDB(connection,reponse);
+              }
+            }
+          });
+        }
       }
     }
-  }
-}
+  });
 
-function addQuestions(data,index,idQuestionnaire) {
-  var question = new Question();
-  question.libelle = data[index]["libelle"];
-  question.multiple = data[index]["multiple"];
-  question.idQuestionnaire = idQuestionnaire;
-  //var res2 = question.createInDB(connection);
-}
-function addQuestionnaire(data) {console.log("addQuestionnaire");
-  var questionnaire = new Questionnaire("123",data["titreQuestionnaire"],1);
-  return wait.for(questionnaire.createInDB,connection,questionnaire);
-}
+  //res.send(req);
+});
 /*
 server.get('/:idObjet/Question', function(req, res) {
   var params = {};
