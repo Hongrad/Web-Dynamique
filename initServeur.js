@@ -4,9 +4,11 @@ var path = require('path');
 var express = require('express');
 var sockets = require('socket.io');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
 var mysql = require('mysql');
+var wait = require('wait.for');
 
 var Client = require('./Classes/Client.js');
 var Etudiant = require('./Classes/Etudiant');
@@ -16,9 +18,11 @@ var Questionnaire = require('./Classes/Questionnaire');
 var Reponse = require('./Classes/Reponse');
 var Resultat = require('./Classes/Resultat');
 
-
 var server = express();
-
+// parse application/x-www-form-urlencoded
+var jsonParser = bodyParser.json();
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 server.get('/', function(req, res) {
     var params = {};
@@ -81,6 +85,41 @@ server.get('/:idObjet/Questionnaire', function(req, res) {
     params.identificationId = identificationId;
     res.render('Questionnaire.ejs', params);
 });
+
+server.post('/newQuestionnaire', jsonParser, function(req, res){
+	var obj = {};
+  wait.launchFiber(createQuestionnaire,req,res);
+  //res.send(req);
+});
+function createQuestionnaire (req,res) {
+  console.log("createQuestionnaire");
+  var res = wait.for(addQuestionnaire,req.body);console.log("createQuestionnaire2");
+  for(var index in req.body) {
+    if(index!="titreQuestionnaire") {
+      console.log("in"+res);console.log(res);
+      var res2 = wait.for(addQuestions,req.body,index,res["insertId"]);
+      for(var index3 in req.body[index]["reponses"]) {
+        var reponse = new Reponse();
+        reponse.libelle = req.body[index]["reponses"][index3]["libelle"];
+        reponse.estLaReponse = req.body[index]["reponses"][index3]["estLaReponse"];
+        reponse.idQuestion = res2["insertId"];
+        var res3 = question.createInDB(connection);
+      }
+    }
+  }
+}
+
+function addQuestions(data,index,idQuestionnaire) {
+  var question = new Question();
+  question.libelle = data[index]["libelle"];
+  question.multiple = data[index]["multiple"];
+  question.idQuestionnaire = idQuestionnaire;
+  //var res2 = question.createInDB(connection);
+}
+function addQuestionnaire(data) {console.log("addQuestionnaire");
+  var questionnaire = new Questionnaire("123",data["titreQuestionnaire"],1);
+  return wait.for(questionnaire.createInDB,connection,questionnaire);
+}
 /*
 server.get('/:idObjet/Question', function(req, res) {
   var params = {};

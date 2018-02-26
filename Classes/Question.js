@@ -2,7 +2,7 @@
  * Une Question
  */
 class Question {
-  
+
     static get nbReponse() {
         return 4;
     }
@@ -11,12 +11,14 @@ class Question {
      * @param idQuestion
      * @param libelle
      * @param multiple
+     * @param idQuestionnaire
      * @param reponses
      */
-    constructor(libelle, multiple, reponses) {
+    constructor(libelle, multiple, idQuestionnaire, reponses) {
         this._idQuestion = -1;
         this._libelle = libelle;
         this._multiple = multiple;
+        this._idQuestionnaire = idQuestionnaire;
         this._reponses = reponses;
     }
 
@@ -46,7 +48,7 @@ class Question {
      * @returns {boolean} true si succes
      */
     createInDB(db) {
-      db.query("INSERT INTO question (libelle,multiple,reponses) VALUES (?,?,?)", [this._libelle,this._multiple,this._reponses], function (err, result) {
+      db.query("INSERT INTO question (libelle,multiple,idQuestionnaire) VALUES (?,?,?)", [this._libelle,this._multiple,this._idQuestionnaire], function (err, result) {
           if (err) throw err;
           console.log(result);
       });
@@ -113,6 +115,14 @@ class Question {
 
     set multiple(value) {
         this._multiple = value;
+    }
+
+    get idQuestionnaire() {
+        return this._idQuestionnaire;
+    }
+
+    set idQuestionnaire(value) {
+        this._idQuestionnaire = value;
     }
 
     get reponses() {

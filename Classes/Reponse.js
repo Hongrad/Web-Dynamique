@@ -31,7 +31,7 @@ class Reponse {
     createInDB(db) {
       db.query("INSERT INTO reponse (libelle,estLaReponse,idQuestion) VALUES (?,?,?)", [this._libelle,this._estLaReponse,this._idQuestion], function (err, result) {
           if (err) throw err;
-          console.log(result);
+          else {return result};
       });
     }
 

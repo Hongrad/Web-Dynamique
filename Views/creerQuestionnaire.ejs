@@ -14,57 +14,71 @@
   <script type="text/javascript" src="js/script.js"></script>
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
   <script>
-      $( function() {
-        $( "#dialog-confirm" ).dialog({
-          autoOpen: false,
-          resizable: false,
-          height: "auto",
-          width: 400,
-          modal: true,
-          buttons: {
-            "Valider": {
-                click: function () {
-                  var questions = $(".creerQ-question");
-                  questions.each(function(index){
-                      //var question = new Question();
-                      var multiple;
-                      var titre;
-                      var reponses;
-                      var inputsQue = $(this).find("p").find("input");
-                      inputsQue.each(function(indexQ){
-                          if(indexQ==0) {
-                              titreQ = $(this).val();
-                          } else {
-                              multiple = this.checked;
-                          }
-                      });
-                      var inputsRep = $(this).find("ul").find("li");console.log(inputsRep);
-                      inputsRep.each(function(indexRep){
-                              /*var reponse = new Reponse();
-                              reponse.libelle($(this).next().val());
-                              reponse.estLaReponse(this.checked);*/console.log($(this).children().first()[0].checked);console.log($(this).children().last().val());
-                      });
-                  });
-                },
-                text: 'Valider',
-                class: 'rounded-button rounded-buttonValid'
-            },
-            "Annuler": {
-                click: function () {
-                    $( this ).dialog( "close" );
-                },
-                text: 'Annuler',
-                class: 'rounded-button rounded-buttonCancel'
-            }
+    $( function() {
+      $( "#dialog-confirm" ).dialog({
+        autoOpen: false,
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          "Valider": {
+              click: function () {
+                var data = {};
+                var questions = $(".creerQ-question");
+                questions.each(function(index){
+                    var question = {};
+                    var reponses = {};
+                    var inputsQue = $(this).find("p").find("input");
+                    inputsQue.each(function(indexQ){
+                        if(indexQ==0) {
+                          question["libelle"] = $(this).val();
+                        } else {
+                          question["multiple"] = this.checked;
+                        }
+                    });
+                    var inputsRep = $(this).find("ul").find("li");console.log(inputsRep);
+                        inputsRep.each(function(indexRep){
+                            var reponse = {};
+                            reponse["libelle"] = $(this).children().last().val();
+                            reponse["estLaReponse"] = $(this).children().first()[0].checked;
+                            reponses[indexRep] = reponse;
+                    });
+                    question.reponses = reponses;
+                    data[index] = question;
+                });
+                data["titreQuestionnaire"]=$("#titreQuestionnaire").val();
+                console.log(data);
+      					$.ajax({
+      						  type: 'POST',
+      						  data: JSON.stringify(data),
+    				        contentType: 'application/json',
+                    url: 'http://localhost:6900/newQuestionnaire',
+                    success: function(data) {
+                        console.log('success');
+                        console.log(data);
+                    }
+                });
+              },
+              text: 'Valider',
+              class: 'rounded-button rounded-buttonValid'
           },
-          open: function(event, ui) {
-              $("button").blur();
+          "Annuler": {
+              click: function () {
+                  $( this ).dialog( "close" );
+              },
+              text: 'Annuler',
+              class: 'rounded-button rounded-buttonCancel'
           }
-        });
-      } );
-      function showModalConfirm() {
-        $("#dialog-confirm").dialog( "open" );
-      }
+        },
+        open: function(event, ui) {
+            $("button").blur();
+        }
+      });
+    });
+    function showModalConfirm() {
+      $("#dialog-confirm").dialog( "open" );
+    }
   </script>
 </head>
 <body>
