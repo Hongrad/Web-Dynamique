@@ -48,7 +48,6 @@
                     data[index] = question;
                 });
                 data["titreQuestionnaire"]=$("#titreQuestionnaire").val();
-                data["PassQuestionnaire"]=$("#PassQuestionnaire").val();
       					$.ajax({
       						  type: 'POST',
       						  data: JSON.stringify(data),
@@ -90,9 +89,6 @@
     <div class="titre-questionnaire">
         <h3>Créez votre questionnaire : <input type="text" id="titreQuestionnaire" placeholder="Insérez votre titre"/></h3>
 
-    </div>
-    <div class="titre-questionnaire">
-      <h3>Créer un code PIN : <input type="text" id="PassQuestionnaire" placeholder="Insérez le PIN"/></h3>
     </div>
     <div class="creerQ-question">
       <p class="titreQuestion">Question 1 / <input type="text" placeholder="Titre de la question"/><label>Multiple ?<input type="checkbox" onChange="updateQuestionType(this);"/></label></p>
