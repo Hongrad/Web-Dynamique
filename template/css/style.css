@@ -21,6 +21,7 @@
 html{
   height: 100%;
 	background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
+	background-attachment: fixed;
 }
 body{
     font-size: 16px;
@@ -39,12 +40,14 @@ body{
 	background-position: center,center;
 	background-size: 80%,80%;
 }
-h1,h2,h3,h4,h5,.roboto{
+h2,h3,h4,h5,.roboto{
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
 }
 h1{
+	font-family: "CeraRoundPro", sans-serif;
 	font-size: 70px;
+	font-weight: bold;
 }
 .h3{
 	font-size: 22px;
@@ -115,7 +118,21 @@ button:disabled{
 	text-align: center;
 	padding: 20px;
 }
-
+#menu_horizontal a{
+		color: #fff;
+}
+.titrePart1, .titrePart2{
+	font-size: 300px;
+	margin: 0;
+}
+.titrePart1 span{
+	vertical-align: sub;
+}
+.titrePart2{
+	font-size: 250px;
+	float: right;
+	font-family: 'Roboto', sans-serif;
+}
 /*** Header ***/
 .titre{
 	font-family: "Octarine";
@@ -225,7 +242,7 @@ input#PassQuestionnaire{
   color: #008cff;
 	float: left;
 	margin: 20px;
-	padding: 10px;
+	padding: 15px;
 	min-height: 128px;
 }
 .questionnaires-bloc-titre{
