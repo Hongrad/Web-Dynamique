@@ -24,6 +24,14 @@ var jsonParser = bodyParser.json();
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+server.use(cookieParser());
+server.use(session({
+    secret: "a secret key",
+    cookie: { maxAge: 2628000000 },
+    resave: false,
+    saveUninitialized: false
+}));
+
 server.get('/', function(req, res) {
     var params = {};
     res.render('accueil.ejs', params);
@@ -180,13 +188,6 @@ server.use('/img', express.static(path.join(__dirname + '/template/img')));
 server.use('/js', express.static(path.join(__dirname + '/template/js')));
 server.use('/Classes', express.static(path.join(__dirname + '/Classes')));
 
-server.use(cookieParser());
-server.use(session({
-    secret: "a secret key",
-    cookie: { maxAge: 2628000000 },
-    resave: false,
-    saveUninitialized: false
-}));
 
 var io = sockets.listen(server.listen(6900));
 
@@ -238,25 +239,24 @@ io.sockets.on("connection", function (socket){
 
                 if (client instanceof Professeur){
                     if (questionnaireId in groups){
-                        if (client.idProfesseur == groups[questionnaireId]["professeur"].idProfesseur){
+                        if (client.idProfesseur === groups[questionnaireId]["professeur"].idProfesseur){
                             // Si le prof se reconnect à un questionnaire
                             groups[questionnaireId]["professeur"] = client;
                             connecte = true;
                         }
                     }else{
-
-                        // Todo : check que c'est le bon prof
-
-                        // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
-                        groups[questionnaireId] = {
-                            "questionnaire": questionnaire,
-                            "professeur": client,
-                            "etudiants": [],
-                            "questionActuelle": null,
-                            "reponsesArrete": true,
-                            "resultats": []
-                        };
-                        connecte = true;
+                        if (client.idProfesseur === questionnaire.idProfesseur){
+                            // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
+                            groups[questionnaireId] = {
+                                "questionnaire": questionnaire,
+                                "professeur": client,
+                                "etudiants": [],
+                                "questionActuelle": null,
+                                "reponsesArrete": true,
+                                "resultats": []
+                            };
+                            connecte = true;
+                        }
                     }
 
                 }else if (client instanceof Etudiant){
