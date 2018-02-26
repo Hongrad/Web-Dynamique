@@ -14,7 +14,7 @@
         <header>
             <a href="/" class="titre"><img class="logo" src="/img/logobleu.png" alt="logo du site" /></a>
         </header>
-        <div id="content">
+        <div id="content" class="content">
             <% if (!isProf){ %>
               <img src="/img/chargement.png" alt="image de chargement" class=""/>
             <% } %>
@@ -94,7 +94,7 @@
             $("#content").html(`
                 <div class="question">
                     <h2>Question : ${question._libelle}</h2>
-                    <div><div>
+                    <div style="display:flex;"><div style="margin:auto;">
                     ${htmlReponse}
                     </div></div>
                     <% if (!isProf){ %>
