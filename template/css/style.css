@@ -99,13 +99,16 @@ button{
   font-size: 20px;
 	cursor: pointer;
 }
+button:disabled{
+  background-color: #005c99;
+  cursor: default;
+}
 #menu button{
   background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
 	padding: 0px 14px 5px 14px;
 }
 .button-type2{
-	background-color: rgba(255, 255, 255, 0.4);
 	border-radius: 50px;
 	font-weight: bold;
 	font-size: 26px;
@@ -285,13 +288,13 @@ input#titreQuestionnaire{
 }
 #particpants-PIN, #particpants-lancer, #particpants-retour, #particpants-modifier{
 	text-align: center;
-	padding: 20px;
+	padding: 10px;
 }
 #particpants-lancer, #particpants-retour, #particpants-modifier{
 	cursor: pointer;
 }
 #particpants-lancer{
-	margin: 30px 0px;
+	margin: 10px 0px;
 }
 #particpants-retour, #particpants-modifier{
 	width: 50%;

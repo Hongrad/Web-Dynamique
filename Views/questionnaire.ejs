@@ -1,197 +1,227 @@
 <html id="attente">
-<head>
-    <title>Patientez</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Patientez</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
 
-    <!-- Feuille de style -->
-    <link type="text/css" href="/css/style.css" rel="stylesheet" />
-</head>
-<body>
-<header>
-    <a href="/" class="titre"><img class="logo" src="/img/logobleu.png" alt="logo du site" /></a>
-</header>
-<div id="content">
-    <img src="/img/chargement.png" alt="image de chargement" class=""/>
-    <p>Veuillez patientez</p>
-    <p>Connexion en cours...</p>
-</div>
-</body>
+        <!-- Feuille de style -->
+        <link type="text/css" href="/css/style.css" rel="stylesheet" />
+    </head>
 
-<script src="/js/jquery-3.3.1.min.js" type="text/javascript"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    // js pour le questionnaire
+    <body>
+        <header>
+            <a href="/" class="titre"><img class="logo" src="/img/logobleu.png" alt="logo du site" /></a>
+        </header>
+        <div id="content">
+            <img src="/img/chargement.png" alt="image de chargement" class=""/>
+            <p>Veuillez patientez</p>
+            <p>Connexion en cours ...</p>
+        </div>
 
-    var socket = null;
+        <% if (isProf){ %>
+        <div style="display:flex;">
+            <div id="particpants-listeParticipants" class="particpants-bloc">
+                <h3>Liste des particpants ayant rejoint le questionnaire : </h3>
+                <span></span>
+                <ul id="listParticiapnt">
+                </ul>
+                <p id="nbParticipants">Nombre de particpants: <span id="nbParticipantsNumber">0</span></p>
+            </div>
+            <div id="particpants-action">
+                <div id="particpants-PIN" class="particpants-bloc">
+                    CODE PIN : <%= pid %>
+                </div>
+                <div id="particpants-lancer" class="particpants-bloc" onclick="questionSuivante(true);">Relancer la question</div>
+                <div id="particpants-lancer" class="particpants-bloc" onclick="questionSuivante();">Question Suivante</div>
+                <div id="particpants-lancer" class="particpants-bloc" onclick="stopReponse();">Arreter la question et voir les résultats</div>
+            </div>
+        </div>
+        <% } %>
+    </body>
 
-    var identificationId = +"<%= identificationId %>";
-    var isProf = +"<%= isProf %>";
+    <script src="/js/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // js pour le questionnaire
 
-    var question = null;
+        var socket = null;
 
-    /**
-     * En attente de la prochaine question
-     */
-    function afficherAttente(){
+        var identificationId = +"<%= identificationId %>";
+        var isProf = +"<%= isProf %>";
 
-        $("#content").html(`
-            <div class="">
-                <img src="/img/chargement.png" alt="image de chargement" class=""/>
-                <p>Veuillez patientez</p>
-                <p>Prochaine question dans quelques instants ...</p>
-            </div>`);
+        var question = null;
 
-        console.log("attente ...")
-    }
+        /**
+         * En attente de la prochaine question
+         */
+        function afficherAttente(){
 
-    /**
-     *
-     */
-    function afficherQuestion(){
-
-        var type = "radio"
-        if (question._multiple == true){
-            type = "checkbox";
+            $("#content").html(`
+                <div class="">
+                    <img src="/img/chargement.png" alt="image de chargement" class=""/>
+                    <p>Veuillez patientez</p>
+                    <p>Prochaine question dans quelques instants ...</p>
+                </div>`);
         }
 
-        var htmlReponse = ``;
-        console.log(question);
-        for (reponse of question._reponses){
-            htmlReponse += `
-                <label class="container">${reponse._libelle}
-                    <input name="reponseId" type="${type}" value="${reponse._idReponse}">
-                    <span class="checkmark"></span>
-                </label>`
+        /**
+         *
+         */
+        function afficherQuestion(){
+
+            var type = "radio"
+            if (question._multiple == true){
+                type = "checkbox";
+            }
+
+            var htmlReponse = ``;
+            console.log(question);
+            for (reponse of question._reponses){
+                htmlReponse += `
+                    <label class="container">${reponse._libelle}
+                        <% if (!isProf){ %>
+                        <input name="reponseId" type="${type}" value="${reponse._idReponse}">
+                        <span class="checkmark"></span>
+                        <% } %>
+                    </label>`
+            }
+
+            $("#content").html(`
+                <div class="question">
+                    <h2>Question : ${question._libelle}</h2>
+                    ${htmlReponse}
+                    <% if (!isProf){ %>
+                    <button id="buttonSendAnswer" class="button-type2" onclick="envoyerReponse();">Valider</button>
+                    <% } %>
+                </div>`);
         }
 
-        $("#content").html(`
-            <div class="question">
-                <h2>Question : ${question._libelle}</h2>
-                ${htmlReponse}
-                <button class="button-type2" onclick="this.disabled = true; envoyerReponse();">Valider</button>
-            </div>`);
+        /**
+         *
+         * @param resultats
+         */
+        function afficherResultat(resultats){
 
-        console.log("afficher question");
-    }
+            var htmlReponse = ``;
+            for (reponse of question._reponses){
+                htmlReponse += `
+                    <p class="container">${reponse._libelle} : ${resultats[reponse._idReponse]}</p>`
+            }
 
-    /**
-     *
-     * @param resultats
-     */
-    function afficherResultat(resultats){
-
-        var htmlReponse = ``;
-        for (reponse of question._reponses){
-            htmlReponse += `
-                <p class="container">${reponse._libelle} : ${resultats[reponse._idReponse]}</p>`
+            $("#content").html(`
+                <div class="question">
+                    <h2>Question : ${question._libelle}</h2>
+                    ${htmlReponse}
+                </div>`);
         }
 
-        $("#content").html(`
-            <div class="question">
-                <h2>Question : ${question._libelle}</h2>
-                ${htmlReponse}
-            </div>`);
+        /**
+         *
+         */
+        function envoyerReponse(){
+            var reponsesId = [];
 
-        console.log("afficher resultat");
-    }
+            if ($("input[name='reponseId']:checked").length > 0){
+                $("input[name='reponseId']").prop("disabled",true);
+                $("#buttonSendAnswer").prop("disabled",true);
+            }
 
-    /**
-     *
-     */
-    function envoyerReponse(){
-        var reponsesId = [];
+            $("input[name='reponseId']:checked").each(function () {
+                $("#buttonSendAnswer").prop("disabled",true);
+                reponsesId.push($(this).attr("value"));
+            });
 
-        $("input[name='reponseId']").each(function () {
-            reponsesId.push($(this).attr("value"));
+            socket.emit("answerQuestion", reponsesId);
+        }
+
+        /**
+         * Demande à passer à la question suivant
+         *
+         * @param relancer vrai si il faut relancer la meme question
+         */
+        function questionSuivante(relancer = false){
+            socket.emit("nextQuestion", relancer);
+        }
+
+        /**
+         * Demande à arreter les réponses et obtenir les résultats
+         */
+        function stopReponse(){
+            socket.emit("stopAnswerQuestion", null);
+        }
+
+        $(function () {
+            // ------------------------------------------------------------------------------------------
+            // initialisation de la connexion
+            // ------------------------------------------------------------------------------------------
+
+            socket = io.connect();
+
+            socket.emit("identify", {"identificationId": identificationId});
+
+            socket.on('identifySuccess', function (data) {
+                afficherAttente();
+            });
+
+            // ------------------------------------------------------------------------------------------
+
+
+            // Un nouvelle étudiant s'est connecté
+            socket.on('newUser', function(data){
+                let nom = data.nom;
+                let id = data.id
+
+                $("#listParticiapnt").append("<li id='user"+id+"'>" + nom +"</li>");
+                $("#nbParticipantsNumber").html(+$("#nbParticipantsNumber").html() + 1);
+            });
+
+            // Un étudiant s'est déconnecté
+            socket.on('userDisconnected', function(data){
+                let nom = data.nom;
+                let id = data.id
+
+                $("#listParticiapnt li#user"+id).remove();
+                $("#nbParticipantsNumber").html(+$("#nbParticipantsNumber").html() - 1);
+            });
+
+            // Réception d'une nouvelle question
+            socket.on('newQuestion', function(data){
+                question = data;
+                afficherQuestion();
+            });
+
+            // Demande d'arret des réponses
+            socket.on('stopAnswerQuestion', function(data){
+                afficherAttente();
+            });
+
+            // Réception des résultats
+            socket.on('showResultQuestion', function(data){
+                var resultats = data;
+                afficherResultat(resultats);
+            });
+
+            // Réception des résultats
+            socket.on('noMoreQuestion', function(data){
+                alert("Le questionnaire est terminé !");
+            });
+
+            // Une erreur
+            socket.on('errors', function(data){
+                alert("Erreur : \n" + data);
+            });
+
+            // Le serveur n'est plus joignable
+            socket.on('disconnect', function(data){
+                alert("Le serveur n'est plus joingnable !\n Essayer de rafraichir la page ...");
+            });
+
+            // Serveur de retour joignable
+            socket.on('reconnect', function(data){
+                window.location.reload(true);
+            });
         });
-
-        socket.emit("answerQuestion", reponsesId);
-    }
-
-    /**
-     * Demande à passer à la question suivant
-     */
-    function questionSuivante(){
-        var relancer = true; // vraie si il faut relancer la meme question
-
-        socket.emit("nextQuestion", false);
-    }
-
-    /**
-     * Demande à arreter les réponses
-     */
-    function stopReponse(){
-        socket.emit("stopAnswerQuestion", null);
-    }
-
-    $(function () {
-        // ------------------------------------------------------------------------------------------
-        // initialisation de la connexion
-        // ------------------------------------------------------------------------------------------
-
-        socket = io.connect();
-
-        socket.emit("identify", {"identificationId": identificationId});
-
-        socket.on('identifySuccess', function (data) {
-            console.log("Identification réussi");
-            afficherAttente();
-        });
-
-        // ------------------------------------------------------------------------------------------
-
-
-        // Un nouvelle étudiant s'est connecté
-        socket.on('newUser', function(data){
-            // Todo : afficher un truc
-            console.log("Nouvelle connexion : " + data);
-        });
-
-        // Un étudiant s'est déconnecté
-        socket.on('userDisconnected', function(data){
-            // Todo : afficher un truc
-            console.log("Utilisateur déconnecté : " + data);
-        });
-
-        // Réception d'une nouvelle question
-        socket.on('newQuestion', function(data){
-            question = data;
-            afficherQuestion();
-        });
-
-        // Demande d'arret des réponses
-        socket.on('stopAnswerQuestion', function(data){
-            // Todo : afficher quelque chose car on ne peut plus répondre à la question
-            console.log("test stop question");
-        });
-
-        // Réception des résultats
-        socket.on('showResultQuestion', function(data){
-            var resultats = data;
-            afficherResultat(resultats);
-        });
-
-        // Une erreur
-        socket.on('errors', function(data){
-            console.log("Erreur : " + data);
-            alert("Erreur : \n" + data);
-        });
-
-        // Le serveur n'est plus joignable
-        socket.on('disconnect', function(data){
-            // Todo : afficher un message
-            console.log("test deconnecté");
-        });
-
-        // Serveur de retour joignable
-        socket.on('reconnect', function(data){
-            // Todo : afficher un message
-            console.log("test reconnect");
-            window.location.reload(true);
-        });
-    });
-</script>
+    </script>
 </html>

@@ -69,6 +69,7 @@ class Questionnaire {
           if (result.length > 0){
               questionnaire = new Questionnaire(result[0].motDePasse, JSON.parse(result[0].questions), result[0].idProfesseur);
               questionnaire.idQuestionnaire = result[0].idQuestion;
+              questionnaire.pid = result[0].pid;
           }
 
           return callback(questionnaire);
