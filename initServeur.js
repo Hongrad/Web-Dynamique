@@ -31,14 +31,79 @@ server.use(session({
     saveUninitialized: false
 }));
 
+server.use( bodyParser.json() );       // to support JSON-encoded bodies
+server.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+}));
+
 server.get('/', function(req, res) {
     var params = {};
     res.render('accueil.ejs', params);
 });
+
+/**
+ * Access à la page de connexion
+ */
 server.get('/connexion', function(req, res) {
-    var params = {};
-    res.render('connexion.ejs', params);
+    if (!req.session.client || !req.session.client._idProfesseur){
+        var params = {};
+        res.render('connexion.ejs', params);
+    }else{
+        res.redirect("/");
+    }
 });
+
+/**
+ * Connexion
+ */
+server.post('/connexion', function(req, res) {
+    if (req.body.type === "professeur"){
+        let professeurId = req.body.professeurId;
+        let motDePasse = req.body.motDePasse;
+
+        Professeur.getById(connection, professeurId).then(function (professeur) {
+            if (professeur && professeur.motDePasse === motDePasse){
+                req.session.client = professeur;
+
+                res.status(200).send(true);
+            }else{
+                res.status(200).send(false);
+            }
+        });
+    }else{
+        let nom = req.body.nom;
+        let questionnaireId = req.body.questionnaireId;
+
+        Questionnaire.getById(connection, questionnaireId).then(function (questionnaire) {
+            if (questionnaire && questionnaireId in groups){ // Todo : check mot de passe
+
+                let etudiant = new Etudiant();
+                etudiant.idEtudiant = Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
+                etudiant.nom = nom;
+
+                req.session.client = etudiant;
+
+                res.status(200).send(true);
+            }else{
+
+                res.status(200).send(false);
+            }
+        });
+    }
+});
+
+/**
+ * Se déconnecter
+ */
+server.get('/deconnexion', function(req, res) {
+    if (req.session.client && req.session.client instanceof Professeur){
+        delete req.session;
+    }
+
+    res.redirect("/");
+});
+
+
 server.get('/creerQuestionnaire', function(req, res) {
     var params = {};
     res.render('creerQuestionnaire.ejs', params);
@@ -61,20 +126,25 @@ var prof = null;
 // Acceder au questionnaire
 server.get('/:idObjet/questionnaire', function(req, res) {
 
-    if (req.session.client){ // Todo : négation
+    if (!req.session.client){
         res.status(403)
             .send('Identification impossible !');
         return;
     }
 
-    let client = req.session.client;
-    if (prof == null){
-        client = new Professeur(); // Todo : récupérer le client connecté
-        client.idProfesseur = 1;
-        prof = true;
+    let client = null;
+    if (req.session.client._idProfesseur){
+        client = new Professeur();
+        client.idProfesseur = req.session.client._idProfesseur;
+        client.nom = req.session.client._nom;
+        client.prenom = req.session.client._prenom;
+        client.nomDeCompte = req.session.client._nomDeCompte;
+        client.motDePasse = req.session.client._motDePasse;
+        client.moduleA = req.session.client._moduleA;
     }else{
-        client = new Etudiant(); // Todo : récupérer le client connecté
-        client.idEtudiant = Math.round(Math.random() * 10000000000);
+        client = new Etudiant();
+        client.idEtudiant = req.session.client._idEtudiant;
+        client.nom = req.session.client._nom;
     }
 
     let questionnaireId = req.params.idObjet;
@@ -251,7 +321,7 @@ io.sockets.on("connection", function (socket){
                             groups[questionnaireId]["etudiants"].push(client);
                             connecte = true;
 
-                            groups[questionnaireId]["professeur"].socket.emit("newUser", {"id": client.idEtudiant, "nom": client.nom + " " + client.prenom});
+                            groups[questionnaireId]["professeur"].socket.emit("newUser", {"id": client.idEtudiant, "nom": client.nom});
                         }else{
                             socket.emit("errors", "Le questionnaire n'a pas encore démarré");
 
@@ -424,7 +494,7 @@ io.sockets.on("connection", function (socket){
             }else if (client instanceof Etudiant){
                 groups[questionnaireId]["etudiants"].splice(groups[questionnaireId]["etudiants"].indexOf(client), 0);
 
-                groups[questionnaireId]["professeur"].socket.emit("userDisconnected", {"id": client.idEtudiant, "nom": client.nom + " " + client.prenom});
+                groups[questionnaireId]["professeur"].socket.emit("userDisconnected", {"id": client.idEtudiant, "nom": client.nom});
             }
         }
 

@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=Anaheim|Roboto" rel="stylesheet">
 
   <!-- Feuille de style -->
-  <link type="text/css" href="css/style.css" rel="stylesheet" />
+  <link type="text/css" href="/css/style.css" rel="stylesheet" />
 </head>
 <body>
   <header>
@@ -17,11 +17,12 @@
     <div class="connexion-form">
         <div class="formLog">
             <div class="connexion-entete">
-              <h2>Accès questionnaires</h2>
+              <h2>Connexion professeur</h2>
             </div>
-            <input type="text" name="login" class="rounded-input" placeholder="Indentifiant"/>
+            <input type="text" name="professeurId" class="rounded-input" placeholder="Indentifiant"/>
             <input type="password" name="password" class="rounded-input" placeholder="Mot de passe"/>
-            <button class="rounded-button">Connexion</button><button class="rounded-button">Enregistrer</button>
+            <button id="professeurConnect" class="rounded-button">Connexion</button>
+            <!--<button class="rounded-button">Enregistrer</button>-->
         </div>
         <!--<input type="text" name="login" id="login" placeholder="Entrez votre Identifiant"/>
         <input type="password" name="password" id="password" placeholder="Mot de passe"/>-->
@@ -32,11 +33,50 @@
               <h2>Participer à un questionnaire</h2>
             </div>
             <input type="text" name="pseudo" class="rounded-input" placeholder="Nom"/>
-            <input type="text" name="pin" class="rounded-input" placeholder="Pin du questionnaire"/>
-            <button class="rounded-button">Connexion</button>
+            <input type="text" name="questionnaireId" class="rounded-input" placeholder="Identifiant du questionnaire"/>
+            <button id="etudiantConnect" class="rounded-button">Connexion</button>
         </div>
     </div>
   </div>
 </body>
+
+<script src="/js/jquery-3.3.1.min.js" type="text/javascript"></script>
+<script>
+    $(function () {
+        $("#professeurConnect").click(function () {
+            let professeurId = $(this).prevAll("[name='professeurId']").val();
+            let motDePasse = $(this).prevAll("[name='password']").val();
+
+            if (professeurId.length > 0 && motDePasse.length > 0){
+                $.post("/connexion", {"type": "professeur", "professeurId": professeurId, "motDePasse": motDePasse}, function (data) {
+                    if (data === true){
+                        window.location = "/"
+                    }else{
+                        alert("Identifiants invalides !");
+                    }
+                });
+            }else{
+                alert("Il manque des informations !");
+            }
+        });
+
+        $("#etudiantConnect").click(function () {
+            let nom = $(this).prevAll("[name='pseudo']").val();
+            let questionnaireId = $(this).prevAll("[name='questionnaireId']").val();
+
+            if (nom.length > 0 && questionnaireId.length > 0){
+                $.post("/connexion", {"type": "etudiant", "nom": nom, "questionnaireId": questionnaireId}, function (data) {
+                    if (data === true){
+                        window.location = "/"+questionnaireId+"/questionnaire"
+                    }else{
+                        alert("Questionnaire introuvable !");
+                    }
+                });
+            }else{
+                alert("Il manque des informations !");
+            }
+        });
+    });
+</script>
 
 </html>

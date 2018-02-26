@@ -43,17 +43,31 @@ module.exports = class Professeur extends Client {
     }
 
     /**
-     * Récupère un professeur via son id
+     * Récupère un professeur avec son id
      *
      * @param db
      * @param id
-     * @returns {Etudiant}
+     * @returns {Professeur}
      */
-    static getById(db,id) {
-      db.query("SELECT * FROM professeur WHERE idProfesseur=?", [id], function (err, result) {
-          if (err) throw err;
-          //TODO voir getById Etudiant
-      });
+    static getById(db, id) {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * FROM professeur WHERE idProfesseur=?", [id], function (err, result) {
+                if (err) {
+                    return reject(err);
+                }else if (result.length == 0) {
+                    resolve(null);
+                }else{
+                    let professeur = new Professeur();
+                    professeur.idProfesseur = result[0].idProfesseur;
+                    professeur.nom = result[0].nom;
+                    professeur.prenom = result[0].prenom;
+                    professeur.nomDeCompte = result[0].nomDeCompte;
+                    professeur.motDePasse = result[0].motDePasse;
+                    professeur.moduleA = result[0].moduleA;
+                    resolve(professeur);
+                }
+            });
+        });
     }
 
     // ------------------------------------------------------------------------------
