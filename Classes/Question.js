@@ -7,14 +7,12 @@ class Question {
         return 4;
     }
     /**
-     *
-     * @param idQuestion
      * @param libelle
      * @param multiple
      * @param idQuestionnaire
-     * @param reponses
      */
     constructor(libelle, multiple, idQuestionnaire) {
+        this._idQuestion = -1;
         this._libelle = libelle;
         this._multiple = multiple;
         this._idQuestionnaire = idQuestionnaire;
@@ -60,25 +58,32 @@ class Question {
     }
 
     /**
-     * Récupère une question via son id
+     * Récupère les question d'un questionnaire
      *
      * @param db
-     * @param id
-     * @returns {Etudiant}
+     * @param questionnaireId
+     *
+     * @returns {question}
      */
-    static getById(db, id, callback) {
-      db.query("SELECT * FROM question WHERE idQuestion=?", [id], function (err, result) {
-          if (err) throw err;
-
-          var question = null;
-
-          if (result.length > 0){
-              question = new Question(result[0].libelle, result[0].multiple, JSON.parse(result[0].reponses));
-              question.idQuestion = result[0].idQuestion;
-          }
-
-          return callback(question);
-      });
+    static getByQuestionnaireId(db, questionnaireId) {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * FROM question WHERE idQuestionnaire=?", [questionnaireId], function (err, result) {
+                if (err) {
+                    return reject(err);
+                }else{
+                    let questions = [];
+                    for (let i = 0 ; i < result.length ; i++) {
+                        let question = new Question();
+                        question.idQuestion = result[i].idQuestion;
+                        question.libelle = result[i].libelle;
+                        question.multiple = result[i].multiple;
+                        question.idQuestionnaire = result[i].idQuestionnaire;
+                        questions.push(question);
+                    }
+                    resolve(questions); // Renvoie la liste des questions
+                }
+            });
+        });
     }
 
     /**

@@ -4,13 +4,12 @@
 class Reponse {
 
     /**
-     *
-     * @param idReponse
      * @param libelle
      * @param estLaReponse
      * @param idQuestion
      */
     constructor(libelle, estLaReponse, idQuestion) {
+        this._idReponse = -1;
         this._libelle = libelle;
         this._estLaReponse = estLaReponse;
         this._idQuestion = idQuestion;
@@ -40,24 +39,31 @@ class Reponse {
     }
 
     /**
-     * Récupère une réponse via son id
+     * Récupère les réponses d'une question
      *
      * @param db
-     * @param id
-     * @returns {Etudiant}
+     * @param questionId
+     *
+     * @returns {question}
      */
-    static getById(db, id, callback) {
-      db.query("SELECT * FROM reponse WHERE idReponse=?", [id], function (err, result) {
-          if (err) throw err;
-
-          var reponse = null;
-
-          if (result.length > 0){
-              reponse = new Reponse(result[0].idReponse, result[0].libelle, result[0].estLaReponse, result[0].idQuestion);
-          }
-
-          return callback(reponse);
-      });
+    static getByQuestionId(db, questionId) {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * FROM reponse WHERE idQuestion=?", [questionId], function (err, result) {
+                if (err) {
+                    return reject(err);
+                }else{
+                    let reponses = [];
+                    for (let i = 0 ; i < result.length ; i++) {
+                        let reponse = new Reponse();
+                        reponse.idReponse = result[i].idReponse;
+                        reponse.libelle = result[i].libelle;
+                        reponse.estLaReponse = result[i].estLaReponse;
+                        reponses.push(reponse);
+                    }
+                    resolve(reponses); // Renvoie la liste des réponses
+                }
+            });
+        });
     }
 
     /**

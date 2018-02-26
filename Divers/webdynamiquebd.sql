@@ -85,40 +85,6 @@ CREATE TABLE IF NOT EXISTS `questionnaire` (
   PRIMARY KEY (`idQuestionnaire`),
   KEY `idProfesseur` (`idProfesseur`)
 ) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `reponse`
---
-
-DROP TABLE IF EXISTS `reponse`;
-CREATE TABLE IF NOT EXISTS `reponse` (
-  `idReponse` int(11) NOT NULL AUTO_INCREMENT,
-  `libelle` varchar(40) NOT NULL,
-  `estLaReponse` tinyint(1) NOT NULL,
-  `idQuestion` int(11) DEFAULT NULL,
-  PRIMARY KEY (`idReponse`),
-  KEY `idQuestion` (`idQuestion`)
-) ENGINE=MyISAM AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `resultat`
---
-
-DROP TABLE IF EXISTS `resultat`;
-CREATE TABLE IF NOT EXISTS `resultat` (
-  `idEtudiant` int(11) NOT NULL,
-  `idQuestionnaire` int(11) NOT NULL,
-  `idQuestion` int(11) NOT NULL,
-  `idReponse` int(11) NOT NULL,
-  PRIMARY KEY (`idEtudiant`,`idQuestionnaire`,`idQuestion`,`idReponse`),
-  KEY `idQuestionnaire` (`idQuestionnaire`),
-  KEY `idQuestion` (`idQuestion`),
-  KEY `idReponse` (`idReponse`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
