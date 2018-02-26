@@ -43,28 +43,6 @@ server.get('/creerQuestionnaire', function(req, res) {
     var params = {};
     res.render('creerQuestionnaire.ejs', params);
 });
-
-// Les routes qui suivent seront à modifier, elles me servent à tester mes pages pour l'instant
-/*server.get('/question', function(req, res) {
-    var params = {};
-    res.render('question.ejs', params);
-});
-server.get('/reponse', function(req, res) {
-    var params = {};
-    res.render('reponse.ejs', params);
-});
-server.get('/attente', function(req, res) {
-    var params = {};
-    res.render('attente.ejs', params);
-});
-server.get('/finQuestion', function(req, res) {
-    var params = {};
-    res.render('finQuestion.ejs', params);
-});
-server.get('/listeParticipants', function(req, res) {
-    var params = {};
-    res.render('listeParticipants.ejs', params);
-});*/
 server.get('/questionnaires', function(req, res) {
     var params = {};
     Questionnaire.getAll(connection).then(function(result) {
