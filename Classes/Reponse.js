@@ -10,9 +10,7 @@ class Reponse {
      * @param estLaReponse
      * @param idQuestion
      */
-    constructor(idReponse, libelle, estLaReponse, idQuestion) {
-
-        this._idReponse = idReponse;
+    constructor(libelle, estLaReponse, idQuestion) {
         this._libelle = libelle;
         this._estLaReponse = estLaReponse;
         this._idQuestion = idQuestion;
@@ -28,10 +26,16 @@ class Reponse {
      * @param db
      * @returns {boolean} true si succes
      */
-    createInDB(db) {
-      db.query("INSERT INTO reponse (libelle,estLaReponse,idQuestion) VALUES (?,?,?)", [this._libelle,this._estLaReponse,this._idQuestion], function (err, result) {
-          if (err) throw err;
-          console.log(result);
+    createInDB(db,reponse) {
+      return new Promise((resolve, reject) => {
+        db.query("INSERT INTO reponse (libelle,estLaReponse,idQuestion) VALUES (?,?,?)", [reponse._libelle,reponse._estLaReponse,reponse._idQuestion], function (err, result) {
+          if (err) {
+              return reject(err);
+            }
+            else {
+              resolve(result.insertId); //Tout c'est bien passé
+            }
+        });
       });
     }
 

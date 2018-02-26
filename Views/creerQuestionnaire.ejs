@@ -14,45 +14,71 @@
   <script type="text/javascript" src="js/script.js"></script>
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
   <script>
-      $( function() {
-        $( "#dialog-confirm" ).dialog({
-          autoOpen: false,
-          resizable: false,
-          height: "auto",
-          width: 400,
-          modal: true,
-          buttons: {
-            "Valider": {
-                click: function () {
-                    var questions = $(".creerQ-question");
-                    for(var q : questions) {
-                      var inputs = q.find("input");
-                      for(var i : inputs) {
-                        var responses;
-                        if(i.id()=="titreQuestion") {var title = i.value();}
-                        else {respones }
-                      }
+    $( function() {
+      $( "#dialog-confirm" ).dialog({
+        autoOpen: false,
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        buttons: {
+          "Valider": {
+              click: function () {
+                var data = {};
+                var questions = $(".creerQ-question");
+                questions.each(function(index){
+                    var question = {};
+                    var reponses = {};
+                    var inputsQue = $(this).find("p").find("input");
+                    inputsQue.each(function(indexQ){
+                        if(indexQ==0) {
+                          question["libelle"] = $(this).val();
+                        } else {
+                          question["multiple"] = this.checked;
+                        }
+                    });
+                    var inputsRep = $(this).find("ul").find("li");console.log(inputsRep);
+                        inputsRep.each(function(indexRep){
+                            var reponse = {};
+                            reponse["libelle"] = $(this).children().last().val();
+                            reponse["estLaReponse"] = $(this).children().first()[0].checked;
+                            reponses[indexRep] = reponse;
+                    });
+                    question.reponses = reponses;
+                    data[index] = question;
+                });
+                data["titreQuestionnaire"]=$("#titreQuestionnaire").val();
+                console.log(data);
+      					$.ajax({
+      						  type: 'POST',
+      						  data: JSON.stringify(data),
+    				        contentType: 'application/json',
+                    url: 'http://localhost:6900/newQuestionnaire',
+                    success: function(data) {
+                        console.log('success');
+                        console.log(data);
                     }
-                },
-                text: 'Valider',
-                class: 'rounded-button rounded-buttonValid'
-            },
-            "Annuler": {
-                click: function () {
-                    $( this ).dialog( "close" );
-                },
-                text: 'Annuler',
-                class: 'rounded-button rounded-buttonCancel'
-            }
+                });
+              },
+              text: 'Valider',
+              class: 'rounded-button rounded-buttonValid'
           },
-          open: function(event, ui) {
-              $("button").blur();
+          "Annuler": {
+              click: function () {
+                  $( this ).dialog( "close" );
+              },
+              text: 'Annuler',
+              class: 'rounded-button rounded-buttonCancel'
           }
-        });
-      } );
-      function showModalConfirm() {
-        $("#dialog-confirm").dialog( "open" );;
-      }
+        },
+        open: function(event, ui) {
+            $("button").blur();
+        }
+      });
+    });
+    function showModalConfirm() {
+      $("#dialog-confirm").dialog( "open" );
+    }
   </script>
 </head>
 <body>
@@ -65,12 +91,12 @@
         <h3>Créez votre questionnaire : <input type="text" id="titreQuestionnaire" placeholder="Insérez votre titre"/></h3>
     </div>
     <div class="creerQ-question">
-      <p class="titreQuestion">Question 1 / <input type="text" id="titreQuestion" placeholder="Titre de la question"/></p>
+      <p class="titreQuestion">Question 1 / <input type="text" placeholder="Titre de la question"/><label>Multiple ?<input type="checkbox" onChange="updateQuestionType(this);"/></label></p>
         <ul>
-          <li>Réponse 1 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 2 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 3 : <input type="text" id="" placeholder=""/></li>
-          <li>Réponse 4 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 1 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 2 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 3 : <input type="text" id="" placeholder=""/></li>
+          <li><input type="radio" name="q1">Réponse 4 : <input type="text" id="" placeholder=""/></li>
         </ul>
     </div>
   </div>

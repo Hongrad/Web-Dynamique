@@ -7,33 +7,32 @@ class Questionnaire {
      *
      * @param idQuestionnaire
      * @param pid
+     * @param titre
      * @param motDePasse
      * @param questions
      * @param idProfesseur
      */
-    constructor(motDePasse, questions, idProfesseur) {
-        this._idQuestionnaire = -1;
+    constructor(motDePasse, titre, idProfesseur) {
         this._pid = Questionnaire.generatePid();
+        this._titre = titre;
         this._motDePasse = motDePasse;
-        this._questions = questions;
         this._idProfesseur = idProfesseur;
     }
-
     /**
      * Ajoute une question au questionnaire
      *
      * @param idQuestion
      */
     addQuestion(idQuestion) {
-        this.questions.push({numQuestion : ""+this.questions.length+"",idQuestion : ""+idQuestion+""});
+        this._questions.push({numQuestion : ""+this.questions.length+"",idQuestion : ""+idQuestion+""});
     }
 
-    generatePid() {
-        this.pid = Math.floor(Math.random() * 100001);
-    }
+    /*generatePid() {
+        this._pid = Math.floor(Math.random() * 100001);
+    }*/
 
     static generatePid(){
-        return Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
+        return Math.round(Math.random() * 100001); // Todo : creer une vraie valeur aléatoire
     }
 
     // ------------------------------------------------------------------------------
@@ -46,11 +45,17 @@ class Questionnaire {
      * @param db
      * @returns {boolean} true si succes
      */
-    createInDB(db) {
-      db.query("INSERT INTO questionnaire (pid,motDePasse,questions,idProfesseur) VALUES (?,?,?,?)", [this._pid,this._motDePasse,this._questions,this._idProfesseur], function (err, result) {
-          if (err) throw err;
-          console.log(result);
-      });
+    createInDB(db,questionnaire) {
+      return new Promise((resolve, reject) => {
+        db.query("INSERT INTO questionnaire (pid,motDePasse,titre,idProfesseur) VALUES (?,?,?,?)", [questionnaire._pid,questionnaire._motDePasse,questionnaire._titre,questionnaire._idProfesseur], function (err, result) {
+          if (err) {
+              return reject(err);
+            }
+            else {
+              resolve(result.insertId); //on retourne l'id de l'élément inséré
+            }
+        });
+    });
     }
 
     /**
@@ -115,6 +120,14 @@ class Questionnaire {
 
     set pid(value) {
         this._pid = value;
+    }
+
+    get titre() {
+        return this._titre;
+    }
+
+    set titre(value) {
+        this._titre = value;
     }
 
     get motDePasse() {

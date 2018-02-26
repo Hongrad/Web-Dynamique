@@ -4,9 +4,11 @@ var path = require('path');
 var express = require('express');
 var sockets = require('socket.io');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var session = require('express-session');
 var path = require('path');
 var mysql = require('mysql');
+var wait = require('wait.for');
 
 var Client = require('./Classes/Client.js');
 var Etudiant = require('./Classes/Etudiant');
@@ -16,9 +18,11 @@ var Questionnaire = require('./Classes/Questionnaire');
 var Reponse = require('./Classes/Reponse');
 var Resultat = require('./Classes/Resultat');
 
-
 var server = express();
-
+// parse application/x-www-form-urlencoded
+var jsonParser = bodyParser.json();
+// create application/x-www-form-urlencoded parser
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 server.get('/', function(req, res) {
     var params = {};
@@ -119,6 +123,45 @@ server.get('/:idObjet/questionnaire', function(req, res) {
         res.render('questionnaire.ejs', params);
     });
 });
+
+server.post('/newQuestionnaire', jsonParser, function(req, res){
+  var questionnaire = new Questionnaire("123",req.body["titreQuestionnaire"],1);
+  var resQuestionnaire = questionnaire.createInDB(connection,questionnaire);
+  resQuestionnaire.then(function(result) {
+    //Si l'insertion s'est bien passée
+    if (result) {
+      var idQuestionnaire = result;
+      for(var index in req.body) {
+        if(index!="titreQuestionnaire") {
+          var question = new Question(req.body[index]["libelle"],req.body[index]["multiple"],idQuestionnaire);
+          var resQuestion = question.createInDB(connection,question,index);
+          resQuestion.then(function(result2) {
+            //Si l'insertion s'est bien passée
+            if (result2) {
+              var idQuestion = result2[0];
+              var numRep = result2[1];
+              for(var index2 in req.body[numRep]["reponses"]) {
+                var reponse = new Reponse(req.body[numRep]["reponses"][index2]["libelle"],req.body[numRep]["reponses"][index2]["estLaReponse"],idQuestion);
+                var resReponse = reponse.createInDB(connection,reponse);
+              }
+            }
+          });
+        }
+      }
+    }
+  });
+
+  //res.send(req);
+});
+/*
+server.get('/:idObjet/Question', function(req, res) {
+  var params = {};
+  params.idObjet = req.params.idObjet;
+  params.nom = "idQuestionn";
+  res.render('Question.ejs', params);
+});*/
+// Créer une route pour: la reponse à une question, une pour les questionnaires d'un prof,
+// une pour la preview d'un questionnaire, la liste des participants à un questionnaire
 
 var connection = mysql.createConnection({
     host : 'localhost',
