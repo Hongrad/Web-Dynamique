@@ -121,17 +121,21 @@ button:disabled{
 #menu_horizontal a{
 		color: #fff;
 }
+#menu{
+	float: right;
+}
 .titrePart1, .titrePart2{
-	font-size: 300px;
+	font-size: 333px;
 	margin: 0;
 }
 .titrePart1 span{
 	vertical-align: sub;
+	margin: 0 30px;
 }
 .titrePart2{
-	font-size: 250px;
+	font-size: 200px;
 	float: right;
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Octarine', sans-serif;
 }
 /*** Header ***/
 .titre{

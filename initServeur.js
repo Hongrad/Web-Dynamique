@@ -46,7 +46,7 @@ server.get('/creerQuestionnaire', function(req, res) {
 server.get('/questionnaires', function(req, res) {
     var params = {};
     var questionnaire = new Questionnaire();
-    var resQuestionnaire = questionnaire.getAll(connection);
+    var resQuestionnaire = Questionnaire.getAll(connection);
     resQuestionnaire.then(function(result) {
       if (result) {
         params.Allquestionnaires = result;
@@ -57,7 +57,7 @@ server.get('/questionnaires', function(req, res) {
 server.get('/:idObjet/previewQuestionnaire', function(req, res) {
     var params = {};
     var questionnaire = new Questionnaire();
-    var resQuestionnaire = questionnaire.getById(connection, req.params.idObjet);
+    var resQuestionnaire = Questionnaire.getById(connection, req.params.idObjet);
     resQuestionnaire.then(function(result) {
       if (result) {
         params.questionnaire = result;
