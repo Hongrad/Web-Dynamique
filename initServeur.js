@@ -61,9 +61,13 @@ var prof = null;
 // Acceder au questionnaire
 server.get('/:idObjet/questionnaire', function(req, res) {
 
-    // Todo : vérifier que l'utilisateur est connecté
+    if (req.session.client){ // Todo : négation
+        res.status(403)
+            .send('Identification impossible !');
+        return;
+    }
 
-    let client = null;
+    let client = req.session.client;
     if (prof == null){
         client = new Professeur(); // Todo : récupérer le client connecté
         client.idProfesseur = 1;
@@ -71,12 +75,6 @@ server.get('/:idObjet/questionnaire', function(req, res) {
     }else{
         client = new Etudiant(); // Todo : récupérer le client connecté
         client.idEtudiant = Math.round(Math.random() * 10000000000);
-    }
-
-    if (client == null){
-        res.status(403)
-            .send('Identification impossible !');
-        return;
     }
 
     let questionnaireId = req.params.idObjet;
@@ -187,7 +185,7 @@ var waitToIdentify = [];
 
 // Liste des groupes connéctés
 // les clées sont les id des questionnaires
-// 1 groupe : [questionnaire, professeur, etudiants, questions, questionActuelle, reponsesArrete, estArrete, resultats]
+// 1 groupe : [questionnaire, professeur, etudiants, questions, questionActuelle, reponsesArrete, resultats, etudiantQuiOntRepondu]
 var groups = [];
 
 // Nouvelle connexion
@@ -240,7 +238,8 @@ io.sockets.on("connection", function (socket){
                                     "questions": questions,
                                     "questionActuelle": null,
                                     "reponsesArrete": true,
-                                    "resultats": []
+                                    "resultats": [],
+                                    "etudiantQuiOntRepondu": []
                                 };
                                 connecte = true;
                             }
@@ -303,6 +302,8 @@ io.sockets.on("connection", function (socket){
         if (client instanceof Professeur && questionnaireId in groups){
 
             groups[questionnaireId]["resultats"] = [];
+            groups[questionnaireId]["etudiantQuiOntRepondu"] = [];
+
             var questionActuelle = groups[questionnaireId]["questionActuelle"];
 
             if (data === true && questionActuelle != null){
@@ -364,7 +365,12 @@ io.sockets.on("connection", function (socket){
      * Un étudiant répond à une question
      */
     socket.on('answerQuestion', function(reponsesId){
-        if (questionnaireId in groups && groups[questionnaireId]["questionActuelle"] != null){
+        if (questionnaireId in groups
+            && groups[questionnaireId]["questionActuelle"] != null
+            && groups[questionnaireId]["etudiantQuiOntRepondu"].indexOf(client) === -1){
+
+            groups[questionnaireId]["etudiantQuiOntRepondu"].push(client);
+
             for (reponseId of reponsesId){
                 if (reponseId in groups[questionnaireId]["resultats"]){
                     groups[questionnaireId]["resultats"][reponseId] ++;
