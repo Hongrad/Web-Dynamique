@@ -176,6 +176,13 @@ input#titreQuestionnaire{
   width: 60%;
 
 }
+input#PassQuestionnaire{
+  margin-bottom: 20px;
+	color: #008cff;
+	font-weight: bold;
+  width: 60%;
+
+}
 .creerQ-question{
   background: #fff;
   padding: 15px;

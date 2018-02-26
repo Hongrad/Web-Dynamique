@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  ven. 16 fév. 2018 à 08:55
+-- Généré le :  lun. 26 fév. 2018 à 13:50
 -- Version du serveur :  5.7.19
 -- Version de PHP :  7.1.9
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `etudiant` (
   `nom` varchar(40) NOT NULL,
   `prenom` varchar(40) NOT NULL,
   PRIMARY KEY (`idEtudiant`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `professeur` (
   `motDePasse` varchar(50) NOT NULL,
   `module` varchar(5) NOT NULL,
   PRIMARY KEY (`idProfesseur`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -64,9 +64,10 @@ CREATE TABLE IF NOT EXISTS `question` (
   `idQuestion` int(11) NOT NULL AUTO_INCREMENT,
   `libelle` varchar(40) NOT NULL,
   `multiple` tinyint(1) NOT NULL,
-  `reponses` json NOT NULL,
-  PRIMARY KEY (`idQuestion`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `idQuestionnaire` int(11) NOT NULL,
+  PRIMARY KEY (`idQuestion`),
+  KEY `idQuestionaire` (`idQuestionnaire`)
+) ENGINE=MyISAM AUTO_INCREMENT=121 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -79,11 +80,11 @@ CREATE TABLE IF NOT EXISTS `questionnaire` (
   `idQuestionnaire` int(11) NOT NULL AUTO_INCREMENT,
   `pid` int(11) NOT NULL,
   `motDePasse` varchar(50) NOT NULL,
-  `questions` json NOT NULL,
   `idProfesseur` int(11) DEFAULT NULL,
+  `titre` varchar(250) NOT NULL,
   PRIMARY KEY (`idQuestionnaire`),
   KEY `idProfesseur` (`idProfesseur`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `reponse` (
   `idQuestion` int(11) DEFAULT NULL,
   PRIMARY KEY (`idReponse`),
   KEY `idQuestion` (`idQuestion`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 

@@ -60,6 +60,12 @@ server.get('/listeParticipants', function(req, res) {
 });
 server.get('/questionnaires', function(req, res) {
     var params = {};
+    var questionnaire = new Questionnaire();
+    var resQuestionnaire = questionnaire.getAll(connection);
+    resQuestionnaire.then(function(result) {
+      if (result) {params.allQuestionnaire = result;}
+    });
+
     res.render('questionnaires.ejs', params);
 });
 server.get('/questionnaire', function(req, res) {
@@ -86,15 +92,15 @@ server.get('/:idObjet/Questionnaire', function(req, res) {
     res.render('Questionnaire.ejs', params);
 });
 
-server.post('/newQuestionnaire', jsonParser, function(req, res){
-  var questionnaire = new Questionnaire("123",req.body["titreQuestionnaire"],1);
+server.post('/newQuestionnaire', jsonParser, function(req, res){console.log(req.session);
+  var questionnaire = new Questionnaire(req.body["PassQuestionnaire"],req.body["titreQuestionnaire"],1);
   var resQuestionnaire = questionnaire.createInDB(connection,questionnaire);
   resQuestionnaire.then(function(result) {
     //Si l'insertion s'est bien passée
     if (result) {
       var idQuestionnaire = result;
       for(var index in req.body) {
-        if(index!="titreQuestionnaire") {
+        if(index!="titreQuestionnaire" && index!="PassQuestionnaire") {
           var question = new Question(req.body[index]["libelle"],req.body[index]["multiple"],idQuestionnaire);
           var resQuestion = question.createInDB(connection,question,index);
           resQuestion.then(function(result2) {
@@ -102,7 +108,7 @@ server.post('/newQuestionnaire', jsonParser, function(req, res){
             if (result2) {
               var idQuestion = result2[0];
               var numRep = result2[1];
-              for(var index2 in req.body[numRep]["reponses"]) {
+              for(var index2 in req.body[numRep]["reponses"]) {console.log(numRep);
                 var reponse = new Reponse(req.body[numRep]["reponses"][index2]["libelle"],req.body[numRep]["reponses"][index2]["estLaReponse"],idQuestion);
                 var resReponse = reponse.createInDB(connection,reponse);
               }
@@ -112,8 +118,8 @@ server.post('/newQuestionnaire', jsonParser, function(req, res){
       }
     }
   });
-
-  //res.send(req);
+  var params = {};
+  res.json({status: "Success", redirect: '/'});
 });
 /*
 server.get('/:idObjet/Question', function(req, res) {
@@ -136,10 +142,6 @@ connection.connect( function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
-
-var etudiant = new Etudiant("","");
-etudiant.getById(connection,2);
-
 
 server.use('/css', express.static(path.join(__dirname + '/template/css')));
 server.use('/img', express.static(path.join(__dirname + '/template/img')));

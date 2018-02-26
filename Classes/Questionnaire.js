@@ -59,39 +59,85 @@ class Questionnaire {
     }
 
     /**
-     * Récupère un questionnaire via son id
-     *
-     * @param db
-     * @param id
-     * @returns {Etudiant}
-     */
-    static getById(db,id) {
-      db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
-          if (err) throw err;
-          //TODO voir getById Etudiant
+	 * Récupère un questionnaire avec son id
+	 *
+	 * @param db
+	 * @param id
+	 * @returns {Questionnaire}
+	 */
+	getById(db,id) {
+		return new Promise((resolve, reject) => {
+				db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
+						if (err) {
+							return reject(err);
+						}
+						else {
+							var questionnaire = new Questionnaire();
+              questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+              questionnaire.pid = result[0].pid;
+              questionnaire.titre = result[0].titre;
+              questionnaire.motDePasse = result[0].motDePasse;
+              questionnaire.idProfesseur = result[0].idProfesseur;
+							resolve(questionnaire);
+						}
+				});
+		});
+	}
+
+  /**
+ * Récupère un questionnaire avec son id
+ *
+ * @param db
+ * @param id
+ * @returns {Questionnaire}
+ */
+getByIdProf(db,id) {
+  return new Promise((resolve, reject) => {
+      db.query("SELECT * FROM questionnaire WHERE idProfesseur=?", [id], function (err, result) {
+          if (err) {
+            return reject(err);
+          }
+          else {
+            var questionnaire = new Questionnaire();
+            questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+            questionnaire.pid = result[0].pid;
+            questionnaire.titre = result[0].titre;
+            questionnaire.motDePasse = result[0].motDePasse;
+            questionnaire.idProfesseur = result[0].idProfesseur;
+            resolve(questionnaire);
+          }
       });
-    }
+  });
+}
 
-    /**
-     * Met à jour le questionnaire en BD
-     *
-     * @returns {boolean} true si succes
-     */
-    updateInDB() {
-        // TODO seulement pour les questions
-        return false;
-    }
-
-    /**
-     * Supprime un questionnaire de la BD
-     *
-     * @param id
-     * @returns {boolean} true si succes
-     */
-    static remove(id) {
-        // TODO seulement pour les questions
-        return false;
-    }
+	/**
+	 * Récupère tous les questionnaires
+	 *
+	 * @param db
+	 * @returns {Questionnaire}
+	 */
+	getAll(db) {
+		return new Promise((resolve, reject) => {
+				db.query("SELECT * FROM questionnaire",function (err, result) {
+						if (err) {
+							return reject(err);
+						}
+						else {
+							var questionnaires = [];
+							for (var i = 0; i < result.length; i++) {
+                var questionnaire = new Questionnaire();
+                questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+                questionnaire.pid = result[0].pid;
+                questionnaire.titre = result[0].titre;
+                questionnaire.motDePasse = result[0].motDePasse;
+                questionnaire.idProfesseur = result[0].idProfesseur;
+								questionnaires.push(questionnaire);
+							}
+							resolve(questionnaires); // Renvoie la liste des questionnaires
+						}
+				});
+		});
+	}
 
     // ------------------------------------------------------------------------------
     // Getter / Setter
