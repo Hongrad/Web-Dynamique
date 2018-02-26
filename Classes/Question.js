@@ -58,28 +58,6 @@ class Question {
     }
 
     /**
-     * Récupère une question via son id
-     *
-     * @param db
-     * @param id
-     * @returns {Etudiant}
-     */
-    static getById(db, id, callback) {
-      db.query("SELECT * FROM question WHERE idQuestion=?", [id], function (err, result) {
-          if (err) throw err;
-
-          var question = null;
-
-          if (result.length > 0){
-              question = new Question(result[0].libelle, result[0].multiple, JSON.parse(result[0].reponses));
-              question.idQuestion = result[0].idQuestion;
-          }
-
-          return callback(question);
-      });
-    }
-
-    /**
      * Récupère les question d'un questionnaire
      *
      * @param db
@@ -96,10 +74,10 @@ class Question {
                     let questions = [];
                     for (let i = 0 ; i < result.length ; i++) {
                         let question = new Question();
-                        question.idQuestion = result[0].idQuestion;
-                        question.libelle = result[0].libelle;
-                        question.multiple = result[0].multiple;
-                        question.idQuestionnaire = result[0].idQuestionnaire;
+                        question.idQuestion = result[i].idQuestion;
+                        question.libelle = result[i].libelle;
+                        question.multiple = result[i].multiple;
+                        question.idQuestionnaire = result[i].idQuestionnaire;
                         questions.push(question);
                     }
                     resolve(questions); // Renvoie la liste des questions

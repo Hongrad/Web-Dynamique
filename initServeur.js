@@ -86,9 +86,10 @@ server.get('/:idObjet/questionnaire', function(req, res) {
 
     // Todo : vérifier que l'utilisateur est connecté
 
-    var client = null;
+    let client = null;
     if (prof == null){
         client = new Professeur(); // Todo : récupérer le client connecté
+        client.idProfesseur = 1;
         prof = true;
     }else{
         client = new Etudiant(); // Todo : récupérer le client connecté
@@ -101,7 +102,7 @@ server.get('/:idObjet/questionnaire', function(req, res) {
         return;
     }
 
-    var questionnaireId = req.params.idObjet;
+    let questionnaireId = req.params.idObjet;
 
     Questionnaire.getById(connection, questionnaireId).then(function(questionnaire) {
         if (questionnaire == null){
@@ -110,29 +111,31 @@ server.get('/:idObjet/questionnaire', function(req, res) {
             return;
         }
 
-        if (questionnaire.questions.length === 0){
-            res.status(404)
-                .send('Ce questionnaire n\'a pas de questions !');
-            return;
-        }
+        Question.getByQuestionnaireId(connection, questionnaire.idQuestionnaire).then(function (questions) {
+            if (questions.length === 0){
+                res.status(404)
+                    .send('Ce questionnaire n\'a pas de questions !');
+                return;
+            }
 
-        // Todo : check pid et mot de passe
+            // Todo : check pid et mot de passe
 
-        var identificationId = Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
+            let identificationId = Math.round(Math.random() * 10000000000); // Todo : creer une vraie valeur aléatoire
 
-        waitToIdentify[identificationId] = {"client": client, "questionnaireId": questionnaireId};
+            waitToIdentify[identificationId] = {"client": client, "questionnaireId": questionnaireId};
 
-        var isProf = false;
-        if (client instanceof Professeur){
-            isProf = true;
-        }
+            let isProf = false;
+            if (client instanceof Professeur){
+                isProf = true;
+            }
 
-        var params = {};
-        params.questionnaireId = questionnaireId;
-        params.identificationId = identificationId;
-        params.isProf = isProf;
-        params.pid = questionnaire.pid;
-        res.render('questionnaire.ejs', params);
+            let params = {};
+            params.questionnaireId = questionnaireId;
+            params.identificationId = identificationId;
+            params.isProf = isProf;
+            params.pid = questionnaire.pid;
+            res.render('questionnaire.ejs', params);
+        });
     });
 });
 
@@ -193,7 +196,7 @@ server.use('/js', express.static(path.join(__dirname + '/template/js')));
 server.use('/Classes', express.static(path.join(__dirname + '/Classes')));
 
 
-var io = sockets.listen(server.listen(6900));
+var io = sockets.listen(server.listen(666));
 
 // -----------------------------------------------------------------------------
 // socket
@@ -207,7 +210,7 @@ var waitToIdentify = [];
 
 // Liste des groupes connéctés
 // les clées sont les id des questionnaires
-// 1 groupe : [questionnaire, professeur, etudiants, questionActuelle, reponsesArrete, estArrete, resultats]
+// 1 groupe : [questionnaire, professeur, etudiants, questions, questionActuelle, reponsesArrete, estArrete, resultats]
 var groups = [];
 
 // Nouvelle connexion
@@ -238,70 +241,73 @@ io.sockets.on("connection", function (socket){
             questionnaireId = waitToIdentify[identificationId]["questionnaireId"];
 
             Questionnaire.getById(connection, questionnaireId).then(function(questionnaire) {
-                delete waitToIdentify[identificationId];
+                Question.getByQuestionnaireId(connection, questionnaire.idQuestionnaire).then(function (questions) {
+                    delete waitToIdentify[identificationId];
 
-                var connecte = false;
+                    let connecte = false;
 
-                if (client instanceof Professeur){
-                    if (questionnaireId in groups){
-                        if (client.idProfesseur === groups[questionnaireId]["professeur"].idProfesseur){
-                            // Si le prof se reconnect à un questionnaire
-                            groups[questionnaireId]["professeur"] = client;
-                            connecte = true;
+                    if (client instanceof Professeur){
+                        if (questionnaireId in groups){
+                            if (client.idProfesseur === groups[questionnaireId]["professeur"].idProfesseur){
+                                // Si le prof se reconnect à un questionnaire
+                                groups[questionnaireId]["professeur"] = client;
+                                connecte = true;
+                            }
+                        }else{
+                            if (client.idProfesseur === questionnaire.idProfesseur){
+                                // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
+                                groups[questionnaireId] = {
+                                    "questionnaire": questionnaire,
+                                    "professeur": client,
+                                    "etudiants": [],
+                                    "questions": questions,
+                                    "questionActuelle": null,
+                                    "reponsesArrete": true,
+                                    "resultats": []
+                                };
+                                connecte = true;
+                            }
                         }
-                    }else{
-                        if (client.idProfesseur === questionnaire.idProfesseur){
-                            // Si le prof se connect à un questionnaire qui n'est pas encore ouvert : on ouvre le questionnaire
-                            groups[questionnaireId] = {
-                                "questionnaire": questionnaire,
-                                "professeur": client,
-                                "etudiants": [],
-                                "questionActuelle": null,
-                                "reponsesArrete": true,
-                                "resultats": []
-                            };
+
+                    }else if (client instanceof Etudiant){
+                        if (questionnaireId in groups){
+                            // Si le questionnaire est ouvert
+                            groups[questionnaireId]["etudiants"].push(client);
                             connecte = true;
+
+                            groups[questionnaireId]["professeur"].socket.emit("newUser", {"id": client.idEtudiant, "nom": client.nom + " " + client.prenom});
+                        }else{
+                            socket.emit("errors", "Le questionnaire n'a pas encore démarré");
+
+                            if (testMode){
+                                console.log("Un utilisateur n'a pas réussi à se connecter à un questionnaire");
+                            }
+                            return;
                         }
                     }
 
-                }else if (client instanceof Etudiant){
-                    if (questionnaireId in groups){
-                        // Si le questionnaire est ouvert
-                        groups[questionnaireId]["etudiants"].push(client);
-                        connecte = true;
+                    if (connecte){
+                        socket.emit("identifySuccess", null);
 
-                        groups[questionnaireId]["professeur"].socket.emit("newUser", {"id": client.idEtudiant, "nom": client.nom + " " + client.prenom});
-                    }else{
-                        socket.emit("errors", "Le questionnaire n'a pas encore démarré");
+                        if (!groups[questionnaireId]["reponsesArrete"]){
+                            socket.emit("newQuestion", groups[questionnaireId]["questionActuelle"]);
+                        }
 
                         if (testMode){
-                            console.log("Un utilisateur n'a pas réussi à se connecter à un questionnaire");
+                            if (client instanceof Professeur){
+                                console.log("Un professeur s'est identifié");
+                            }else{
+                                console.log("Un etudiant s'est identifié");
+                            }
                         }
-                        return;
-                    }
-                }
+                    }else{
+                        socket.emit("errors", "Erreur de connexion");
 
-                if (connecte){
-                    socket.emit("identifySuccess", null);
-
-                    if (!groups[questionnaireId]["reponsesArrete"]){
-                        socket.emit("newQuestion", groups[questionnaireId]["questionActuelle"]);
-                    }
-
-                    if (testMode){
-                        if (client instanceof Professeur){
-                            console.log("Un professeur s'est identifié");
-                        }else{
-                            console.log("Un etudiant s'est identifié");
+                        if (testMode){
+                            console.log("Un utilisateur n'a pas réussi à s'identifier");
                         }
                     }
-                }else{
-                    socket.emit("errors", "Erreur de connexion");
-
-                    if (testMode){
-                        console.log("Un utilisateur n'a pas réussi à s'identifier");
-                    }
-                }
+                });
             });
         }else{
             socket.emit("errors", "Erreur de connexion : identifiant invalide");
@@ -319,42 +325,8 @@ io.sockets.on("connection", function (socket){
     socket.on('nextQuestion', function(data){
         if (client instanceof Professeur && questionnaireId in groups){
 
-            var reponses = [];
-
-            var getReponseCallback = function (reponse) {
-                let question = groups[questionnaireId]["questionActuelle"];
-
-                reponses.push(reponse);
-                groups[questionnaireId]["resultats"][reponse.idReponse] = 0;
-
-                if (reponses.length === question.reponses.length){
-                    question.reponses = reponses;
-
-                    for (var i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
-                        groups[questionnaireId]["etudiants"][i].socket.emit("newQuestion", question);
-                    }
-                    socket.emit("newQuestion", question);
-
-                    if (testMode){
-                        console.log("Un professeur a demander a passer à la question suivante");
-                    }
-                }
-            };
-
-            var getQuestionCallback = function (question) {
-                groups[questionnaireId]["questionActuelle"] = question;
-                groups[questionnaireId]["reponsesArrete"] = false;
-
-                // Recupération des réponses
-                for (reponseId of question.reponses) {
-
-                    Reponse.getById(connection, reponseId, getReponseCallback);
-                }
-            };
-
-
             groups[questionnaireId]["resultats"] = [];
-            let questionActuelle = groups[questionnaireId]["questionActuelle"];
+            var questionActuelle = groups[questionnaireId]["questionActuelle"];
 
             if (data === true && questionActuelle != null){
                 // Relancer la meme question
@@ -362,7 +334,7 @@ io.sockets.on("connection", function (socket){
                     groups[questionnaireId]["resultats"][reponse.idReponse] = 0;
                 }
 
-                for (var i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
+                for (let i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
                     groups[questionnaireId]["etudiants"][i].socket.emit("newQuestion", questionActuelle);
                 }
                 socket.emit("newQuestion", questionActuelle);
@@ -372,20 +344,40 @@ io.sockets.on("connection", function (socket){
                 }
             }else{
                 // Lancer la question suivante
-                let nextQuestionId = null;
+                var nextQuestion = null;
 
-                if (questionActuelle == null){
+                if (nextQuestion == null){
                     // Première question
-                    nextQuestionId = groups[questionnaireId]["questionnaire"].questions[0];
-                }else if (groups[questionnaireId]["questionnaire"].questions.length > groups[questionnaireId]["questionnaire"].questions.indexOf(questionActuelle.idQuestion) + 1){
-                    nextQuestionId = groups[questionnaireId]["questionnaire"].questions[groups[questionnaireId]["questionnaire"].questions.indexOf(questionActuelle.idQuestion) + 1];
+                    nextQuestion = groups[questionnaireId]["questions"][0];
+                }else if (groups[questionnaireId]["questions"].length > groups[questionnaireId]["questions"].indexOf(questionActuelle) + 1){
+                    nextQuestion = groups[questionnaireId]["questions"][groups[questionnaireId]["questions"].indexOf(questionActuelle) + 1];
                 }else{
                     // On était à la dernière question
                     socket.emit("noMoreQuestion", null);
                     return;
                 }
 
-                Question.getById(connection, nextQuestionId, getQuestionCallback);
+                groups[questionnaireId]["questionActuelle"] = nextQuestion;
+                groups[questionnaireId]["reponsesArrete"] = false;
+
+                // Recupération des réponses
+                Reponse.getByQuestionId(connection, nextQuestion.idQuestion).then(function(reponses) {
+
+                    for (reponse of reponses){
+                        groups[questionnaireId]["resultats"][reponse.idReponse] = 0;
+                    }
+
+                    nextQuestion.reponses = reponses;
+
+                    for (let i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
+                        groups[questionnaireId]["etudiants"][i].socket.emit("newQuestion", nextQuestion);
+                    }
+                    socket.emit("newQuestion", nextQuestion);
+
+                    if (testMode){
+                        console.log("Un professeur a demander a passer à la question suivante");
+                    }
+                });
             }
 
         }

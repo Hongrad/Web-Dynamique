@@ -55,9 +55,9 @@ class Reponse {
                     let reponses = [];
                     for (let i = 0 ; i < result.length ; i++) {
                         let reponse = new Reponse();
-                        reponse.idReponse = result[0].idReponse();
-                        reponse.libelle = result[0].libelle;
-                        reponse.estLaReponse = result[0].estLaReponse;
+                        reponse.idReponse = result[i].idReponse;
+                        reponse.libelle = result[i].libelle;
+                        reponse.estLaReponse = result[i].estLaReponse;
                         reponses.push(reponse);
                     }
                     resolve(reponses); // Renvoie la liste des réponses
