@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  lun. 26 fév. 2018 à 13:50
+-- Généré le :  lun. 26 fév. 2018 à 19:15
 -- Version du serveur :  5.7.19
 -- Version de PHP :  7.1.9
 
@@ -21,20 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Base de données :  `webdynamiquebd`
 --
-
--- --------------------------------------------------------
-
---
--- Structure de la table `etudiant`
---
-
-DROP TABLE IF EXISTS `etudiant`;
-CREATE TABLE IF NOT EXISTS `etudiant` (
-  `idEtudiant` int(11) NOT NULL AUTO_INCREMENT,
-  `nom` varchar(40) NOT NULL,
-  `prenom` varchar(40) NOT NULL,
-  PRIMARY KEY (`idEtudiant`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -85,6 +71,22 @@ CREATE TABLE IF NOT EXISTS `questionnaire` (
   PRIMARY KEY (`idQuestionnaire`),
   KEY `idProfesseur` (`idProfesseur`)
 ) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reponse`
+--
+
+DROP TABLE IF EXISTS `reponse`;
+CREATE TABLE IF NOT EXISTS `reponse` (
+  `idReponse` int(11) NOT NULL AUTO_INCREMENT,
+  `libelle` varchar(40) NOT NULL,
+  `estLaReponse` tinyint(1) NOT NULL,
+  `idQuestion` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idReponse`),
+  KEY `idQuestion` (`idQuestion`)
+) ENGINE=MyISAM AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

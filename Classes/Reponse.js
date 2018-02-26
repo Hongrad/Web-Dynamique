@@ -67,24 +67,33 @@ class Reponse {
     }
 
     /**
-     * Met à jour la réponse en BD
+     * Récupère une question via son id
      *
-     * @returns {boolean} true si succes
-     */
-    updateInDB() {
-        // Todo
-        return false;
-    }
-
-    /**
-     * Supprime une réponse de la BD
-     *
+     * @param db
      * @param id
-     * @returns {boolean} true si succes
+     * @returns {Etudiant}
      */
-    static remove(id) {
-        // Todo
-        return false;
+    static getByIdQuestion(db, idQuestion) {
+      return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM reponse WHERE idQuestion=?", [idQuestion], function (err, result) {
+          if (err) {
+              return reject(err);
+          }else if (result.length == 0) {
+              resolve(null);
+          }else{
+            var reponses = [];
+            for (var i = 0; i < result.length; i++) {
+              var reponse = new Reponse();
+              reponse.idQuestion = result[i].idQuestion;
+              reponse.libelle = result[i].libelle;
+              reponse.idReponse = result[i].idReponse;
+              reponse.estLaReponse = result[i].estLaReponse;
+              reponses.push(reponse);
+            }
+            resolve(reponses);
+          }
+        });
+      });
     }
 
     // ------------------------------------------------------------------------------

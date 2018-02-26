@@ -87,25 +87,35 @@ class Question {
     }
 
     /**
-     * Met à jour la question en BD
+     * Récupère une question via son id
      *
-     * @returns {boolean} true si succes
+     * @param db
+     * @param id
+     * @returns {Etudiant}
      */
-    updateInDB() {
-        // TODO update seulement les reponses
-        return false;
+    static getByIdQuestionnaire(db, idQuestionnaire) {
+      return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM question WHERE idQuestionnaire=?", [idQuestionnaire], function (err, result) {
+          if (err) {
+              return reject(err);
+          }else if (result.length == 0) {
+              resolve(null);
+          }else{
+            var questions = [];
+            for (var i = 0; i < result.length; i++) {
+              var question = new Question();
+              question.idQuestion = result[i].idQuestion;
+              question.libelle = result[i].libelle;
+              question.idQuestionnaire = result[i].idQuestionnaire;
+              question.multiple = result[i].multiple;
+              questions.push(question);
+            }
+            resolve(questions);
+          }
+        });
+      });
     }
 
-    /**
-     * Supprime une question de la BD
-     *
-     * @param id
-     * @returns {boolean} true si succes
-     */
-    static remove(id) {
-        // TODO delete seulement les reponses
-        return false;
-    }
 
     // ------------------------------------------------------------------------------
     // Getter / Setter

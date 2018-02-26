@@ -45,15 +45,35 @@ server.get('/creerQuestionnaire', function(req, res) {
 });
 server.get('/questionnaires', function(req, res) {
     var params = {};
+<<<<<<< HEAD
+    var questionnaire = new Questionnaire();
+    var resQuestionnaire = questionnaire.getAll(connection);
+    resQuestionnaire.then(function(result) {
+      if (result) {
+        params.Allquestionnaires = result;
+        res.render('questionnaires.ejs', params);
+      }
+=======
     Questionnaire.getAll(connection).then(function(result) {
       if (result) {params.allQuestionnaire = result;}
+>>>>>>> b8d47b531ca3aabeef8f05ceeca4f50efa0e3112
     });
-
-    res.render('questionnaires.ejs', params);
 });
-server.get('/questionnaire', function(req, res) {
+server.get('/:idObjet/previewQuestionnaire', function(req, res) {
     var params = {};
-    res.render('previewQuestionnaire.ejs', params);
+    var questionnaire = new Questionnaire();
+    var resQuestionnaire = questionnaire.getById(connection, req.params.idObjet);
+    resQuestionnaire.then(function(result) {
+      if (result) {
+        params.questionnaire = result;
+        var questions = new Question();
+        var resQuestion = Question.getByIdQuestionnaire(connection, req.params.idObjet);
+        resQuestion.then(function(result2){
+          params.questions = result2;
+          res.render('previewQuestionnaire.ejs', params);
+        });
+      }
+    });
 });
 
 var prof = null;
