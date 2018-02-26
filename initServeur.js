@@ -16,7 +16,6 @@ var Professeur = require('./Classes/Professeur');
 var Question = require('./Classes/Question');
 var Questionnaire = require('./Classes/Questionnaire');
 var Reponse = require('./Classes/Reponse');
-var Resultat = require('./Classes/Resultat');
 
 var server = express();
 // parse application/x-www-form-urlencoded
@@ -220,10 +219,10 @@ io.sockets.on("connection", function (socket){
     }
 
     // Le client lié à la socket
-    var client = null;
+    let client = null;
 
     // L'id du questionnaire dans lequel l'utilisateur s'est connecté
-    var questionnaireId = null;
+    let questionnaireId = null;
 
     /**
      * Identification
@@ -231,7 +230,7 @@ io.sockets.on("connection", function (socket){
      */
     socket.on('identify', function(data){
 
-        var identificationId = data.identificationId;
+        let identificationId = data.identificationId;
 
         if (identificationId in waitToIdentify){
 
@@ -346,7 +345,7 @@ io.sockets.on("connection", function (socket){
                 // Lancer la question suivante
                 var nextQuestion = null;
 
-                if (nextQuestion == null){
+                if (questionActuelle == null){
                     // Première question
                     nextQuestion = groups[questionnaireId]["questions"][0];
                 }else if (groups[questionnaireId]["questions"].length > groups[questionnaireId]["questions"].indexOf(questionActuelle) + 1){
@@ -386,10 +385,8 @@ io.sockets.on("connection", function (socket){
     /**
      * Un étudiant répond à une question
      */
-    socket.on('answerQuestion', function(data){
+    socket.on('answerQuestion', function(reponsesId){
         if (questionnaireId in groups && groups[questionnaireId]["questionActuelle"] != null){
-            var reponsesId = data;
-
             for (reponseId of reponsesId){
                 if (reponseId in groups[questionnaireId]["resultats"]){
                     groups[questionnaireId]["resultats"][reponseId] ++;
@@ -410,11 +407,11 @@ io.sockets.on("connection", function (socket){
 
             groups[questionnaireId]["reponsesArrete"] = true;
 
-            for (var i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
+            for (let i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
                 groups[questionnaireId]["etudiants"][i].socket.emit("stopAnswerQuestion");
             }
 
-            var resultats = groups[questionnaireId]["resultats"];
+            let resultats = groups[questionnaireId]["resultats"];
 
             socket.emit("showResultQuestion", resultats);
 
@@ -434,7 +431,7 @@ io.sockets.on("connection", function (socket){
             if (client instanceof Professeur){
                 // Si le prof se déconnect : on supprime le questionnaire
 
-                for (var i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
+                for (let i = 0, length = groups[questionnaireId]["etudiants"].length ; i < length ; i++){
                     groups[questionnaireId]["etudiants"][i].socket.emit("errors", "Erreur : le professeur s'est déconnecté");
                 }
 
