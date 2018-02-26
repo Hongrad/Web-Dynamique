@@ -7,14 +7,12 @@ class Question {
         return 4;
     }
     /**
-     *
-     * @param idQuestion
      * @param libelle
      * @param multiple
      * @param idQuestionnaire
-     * @param reponses
      */
     constructor(libelle, multiple, idQuestionnaire) {
+        this._idQuestion = -1;
         this._libelle = libelle;
         this._multiple = multiple;
         this._idQuestionnaire = idQuestionnaire;
@@ -79,6 +77,35 @@ class Question {
 
           return callback(question);
       });
+    }
+
+    /**
+     * Récupère les question d'un questionnaire
+     *
+     * @param db
+     * @param questionnaireId
+     *
+     * @returns {question}
+     */
+    static getByQuestionnaireId(db, questionnaireId) {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * FROM question WHERE idQuestionnaire=?", [questionnaireId], function (err, result) {
+                if (err) {
+                    return reject(err);
+                }else{
+                    let questions = [];
+                    for (let i = 0 ; i < result.length ; i++) {
+                        let question = new Question();
+                        question.idQuestion = result[0].idQuestion;
+                        question.libelle = result[0].libelle;
+                        question.multiple = result[0].multiple;
+                        question.idQuestionnaire = result[0].idQuestionnaire;
+                        questions.push(question);
+                    }
+                    resolve(questions); // Renvoie la liste des questions
+                }
+            });
+        });
     }
 
     /**

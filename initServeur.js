@@ -68,9 +68,7 @@ server.get('/listeParticipants', function(req, res) {
 });*/
 server.get('/questionnaires', function(req, res) {
     var params = {};
-    var questionnaire = new Questionnaire();
-    var resQuestionnaire = questionnaire.getAll(connection);
-    resQuestionnaire.then(function(result) {
+    Questionnaire.getAll(connection).then(function(result) {
       if (result) {params.allQuestionnaire = result;}
     });
 
@@ -105,9 +103,7 @@ server.get('/:idObjet/questionnaire', function(req, res) {
 
     var questionnaireId = req.params.idObjet;
 
-    var questionnaire = new Questionnaire();
-    var resQuestionnaire = questionnaire.getById(connection, questionnaireId);
-    resQuestionnaire.then(function(questionnaire) {
+    Questionnaire.getById(connection, questionnaireId).then(function(questionnaire) {
         if (questionnaire == null){
             res.status(404)
                 .send('Questionnaire introuvable !');
@@ -241,9 +237,7 @@ io.sockets.on("connection", function (socket){
 
             questionnaireId = waitToIdentify[identificationId]["questionnaireId"];
 
-            var questionnaire = new Questionnaire();
-            var resQuestionnaire = questionnaire.getById(connection, questionnaireId);
-            resQuestionnaire.then(function(questionnaire) {
+            Questionnaire.getById(connection, questionnaireId).then(function(questionnaire) {
                 delete waitToIdentify[identificationId];
 
                 var connecte = false;

@@ -4,15 +4,12 @@
 class Questionnaire {
 
     /**
-     *
-     * @param idQuestionnaire
-     * @param pid
      * @param titre
      * @param motDePasse
-     * @param questions
      * @param idProfesseur
      */
     constructor(motDePasse, titre, idProfesseur) {
+        this._idQuestionnaire = -1;
         this._pid = Questionnaire.generatePid();
         this._titre = titre;
         this._motDePasse = motDePasse;
@@ -65,7 +62,7 @@ class Questionnaire {
 	 * @param id
 	 * @returns {Questionnaire}
 	 */
-	getById(db,id) {
+	static getById(db, id) {
 		return new Promise((resolve, reject) => {
             db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
                 if (err) {
@@ -92,23 +89,23 @@ class Questionnaire {
     * @param id
     * @returns {Questionnaire}
     */
-    getByIdProf(db,id) {
-      return new Promise((resolve, reject) => {
-          db.query("SELECT * FROM questionnaire WHERE idProfesseur=?", [id], function (err, result) {
-              if (err) {
+    static getByIdProf(db,id) {
+        return new Promise((resolve, reject) => {
+            db.query("SELECT * FROM questionnaire WHERE idProfesseur=?", [id], function (err, result) {
+                if (err) {
                 return reject(err);
-              }
-              else {
-                var questionnaire = new Questionnaire();
-                questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-                questionnaire.pid = result[0].pid;
-                questionnaire.titre = result[0].titre;
-                questionnaire.motDePasse = result[0].motDePasse;
-                questionnaire.idProfesseur = result[0].idProfesseur;
-                resolve(questionnaire);
-              }
-          });
-      });
+                }
+                else {
+                    var questionnaire = new Questionnaire();
+                    questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+                    questionnaire.pid = result[0].pid;
+                    questionnaire.titre = result[0].titre;
+                    questionnaire.motDePasse = result[0].motDePasse;
+                    questionnaire.idProfesseur = result[0].idProfesseur;
+                    resolve(questionnaire);
+                }
+            });
+        });
     }
 
 	/**
@@ -117,26 +114,26 @@ class Questionnaire {
 	 * @param db
 	 * @returns {Questionnaire}
 	 */
-	getAll(db) {
+    static getAll(db) {
 		return new Promise((resolve, reject) => {
-				db.query("SELECT * FROM questionnaire",function (err, result) {
-						if (err) {
-							return reject(err);
-						}
-						else {
-							var questionnaires = [];
-							for (var i = 0; i < result.length; i++) {
-                var questionnaire = new Questionnaire();
-                questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-                questionnaire.pid = result[0].pid;
-                questionnaire.titre = result[0].titre;
-                questionnaire.motDePasse = result[0].motDePasse;
-                questionnaire.idProfesseur = result[0].idProfesseur;
-								questionnaires.push(questionnaire);
-							}
-							resolve(questionnaires); // Renvoie la liste des questionnaires
-						}
-				});
+            db.query("SELECT * FROM questionnaire",function (err, result) {
+                if (err) {
+                    return reject(err);
+                }
+                else {
+                    var questionnaires = [];
+                    for (var i = 0; i < result.length; i++) {
+                        var questionnaire = new Questionnaire();
+                        questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+                        questionnaire.pid = result[0].pid;
+                        questionnaire.titre = result[0].titre;
+                        questionnaire.motDePasse = result[0].motDePasse;
+                        questionnaire.idProfesseur = result[0].idProfesseur;
+                        questionnaires.push(questionnaire);
+                    }
+                    resolve(questionnaires); // Renvoie la liste des questionnaires
+                }
+            });
 		});
 	}
 
