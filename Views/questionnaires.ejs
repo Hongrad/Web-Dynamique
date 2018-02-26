@@ -16,8 +16,18 @@
   </header>
   <div id="menu"><button>Menu</button></div>
   <div class="content">
-      <h2 class="quetionnaires-titre">Vos questionnaires:</h2>
-      <span></span>
+    <h2 class="quetionnaires-titre">Vos questionnaires:</h2>
+    <span></span>
+    <% for(var i=0; i < Allquestionnaires.length; i++) {%>
+      <a href="/<%=Allquestionnaires[i].idQuestionnaire%>/Questionnaire">
+        <div class="questionnaires-bloc">
+          <p class="questionnaires-bloc-titre">Questionnaire <%=Allquestionnaires[i].titre%></p>
+          <p class="questionnaires-bloc-pin">CODE PIN : <span><%=Allquestionnaires[i].pid%></span></p>
+        </div>
+      </a>
+    <%}%>
+  <!--
+
       <a href="" id="">
         <div class="questionnaires-bloc">
           <p class="questionnaires-bloc-titre">Questionnaire 1</p>
@@ -46,10 +56,9 @@
           <span style="display:flex;"><a href="creerQuestionnaire"><button>+</button></a></span>
           <p class="questionnaires-bloc-titre">Créez un nouveau</p>
         </div>
-  </div>
+  </div>-->
 </body>
 <script>
-var test = <%= allQuestionnaire %>;
-console.log(test);
+
 </script>
 </html>

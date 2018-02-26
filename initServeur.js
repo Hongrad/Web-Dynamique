@@ -63,10 +63,11 @@ server.get('/questionnaires', function(req, res) {
     var questionnaire = new Questionnaire();
     var resQuestionnaire = questionnaire.getAll(connection);
     resQuestionnaire.then(function(result) {
-      if (result) {params.allQuestionnaire = result;}
+      if (result) {
+        params.Allquestionnaires = result;
+        res.render('questionnaires.ejs', params);
+      }
     });
-
-    res.render('questionnaires.ejs', params);
 });
 server.get('/questionnaire', function(req, res) {
     var params = {};
