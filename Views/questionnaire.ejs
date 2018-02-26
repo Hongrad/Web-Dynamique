@@ -15,13 +15,15 @@
             <a href="/" class="titre"><img class="logo" src="/img/logobleu.png" alt="logo du site" /></a>
         </header>
         <div id="content">
-            <img src="/img/chargement.png" alt="image de chargement" class=""/>
+            <% if (!isProf){ %>
+              <img src="/img/chargement.png" alt="image de chargement" class=""/>
+            <% } %>
             <p>Veuillez patientez</p>
             <p>Connexion en cours ...</p>
         </div>
 
         <% if (isProf){ %>
-        <div style="display:flex;">
+        <div style="display:flex;" id="viewProf">
             <div id="particpants-listeParticipants" class="particpants-bloc">
                 <h3>Liste des particpants ayant rejoint le questionnaire : </h3>
                 <span></span>
@@ -60,7 +62,9 @@
 
             $("#content").html(`
                 <div class="">
-                    <img src="/img/chargement.png" alt="image de chargement" class=""/>
+                    <% if (!isProf){ %>
+                      <img src="/img/chargement.png" alt="image de chargement" class=""/>
+                    <% } %>
                     <p>Veuillez patientez</p>
                     <p>Prochaine question dans quelques instants ...</p>
                 </div>`);
@@ -90,7 +94,9 @@
             $("#content").html(`
                 <div class="question">
                     <h2>Question : ${question._libelle}</h2>
+                    <div><div>
                     ${htmlReponse}
+                    </div></div>
                     <% if (!isProf){ %>
                     <button id="buttonSendAnswer" class="button-type2" onclick="envoyerReponse();">Valider</button>
                     <% } %>
