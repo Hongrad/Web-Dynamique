@@ -23,15 +23,14 @@
       <div class="creerQ-question">
         <p class="titreQuestion">Question 1 / <input type="text" disabled value="<%=questions[i].libelle%>"/></p>
           <ul>
-            <li>Réponse 1 : <input style="width:250px" type="text" id="" value="Les réponses pas récupérées"/></li>
-            <li>Réponse 2 : <input style="width:250px" type="text" id="" value="Problèmes de promise"/></li>
-            <li>Réponse 3 : <input style="width:250px" type="text" id="" value="et d'accès au result antérieur"/></li>
-            <li>Réponse 4 : <input style="width:250px" type="text" id="" value="Merci de votre compréhension"/></li>
+            <% for (reponse of questions[i].reponses) { %>
+            <li>Réponse <%=questions[i].reponses.indexOf(reponse) + 1%> : <input style="width:250px" type="text" id="" value="<%=reponse.libelle%>"/></li>
+            <% } %>
           </ul>
       </div>
     <%}%>
     <div class="right">
-        <a href="listeParticipants"><button class="rounded-button questionnaire-button">Lancer questionnaire</button></a>
+        <a href="/<%=questionnaire.idQuestionnaire%>/questionnaire"><button class="rounded-button questionnaire-button">Lancer questionnaire</button></a>
     </div>
   </div>
 </body>

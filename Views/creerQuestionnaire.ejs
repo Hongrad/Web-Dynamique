@@ -37,7 +37,7 @@
                           question["multiple"] = this.checked;
                         }
                     });
-                    var inputsRep = $(this).find("ul").find("li");console.log(inputsRep);
+                    var inputsRep = $(this).find("ul").find("li");
                         inputsRep.each(function(indexRep){
                             var reponse = {};
                             reponse["libelle"] = $(this).children().last().val();
@@ -49,12 +49,11 @@
                 });
                 data["titreQuestionnaire"]=$("#titreQuestionnaire").val();
                 data["PassQuestionnaire"]=$("#PassQuestionnaire").val();
-                console.log(data);
       					$.ajax({
       						  type: 'POST',
       						  data: JSON.stringify(data),
     				        contentType: 'application/json',
-                    url: 'http://localhost:6900/newQuestionnaire',
+                    url: '/newQuestionnaire',
                     success: function(data) {
                       if (data.status === "Success") {
                         window.location = data.redirect;

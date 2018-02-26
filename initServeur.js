@@ -105,14 +105,24 @@ server.get('/deconnexion', function(req, res) {
 
 
 server.get('/creerQuestionnaire', function(req, res) {
+    if (!req.session.client || !req.session.client._idProfesseur){
+        res.status(403)
+            .send('Vous devez être identifié !');
+        return;
+    }
+
     var params = {};
     res.render('creerQuestionnaire.ejs', params);
 });
 server.get('/questionnaires', function(req, res) {
+    if (!req.session.client || !req.session.client._idProfesseur){
+        res.status(403)
+            .send('Vous devez être identifié !');
+        return;
+    }
+
     var params = {};
-    var questionnaire = new Questionnaire();
-    var resQuestionnaire = questionnaire.getAll(connection);
-    resQuestionnaire.then(function(result) {
+    Questionnaire.getByIdProf(connection, req.session.client._idProfesseur).then(function(result) {
       if (result) {
         params.Allquestionnaires = result;
         res.render('questionnaires.ejs', params);
@@ -120,19 +130,31 @@ server.get('/questionnaires', function(req, res) {
     });
 });
 server.get('/:idObjet/previewQuestionnaire', function(req, res) {
+    if (!req.session.client || !req.session.client._idProfesseur){
+        res.status(403)
+            .send('Vous devez être identifié !');
+        return;
+    }
+
     var params = {};
-    var questionnaire = new Questionnaire();
-    var resQuestionnaire = questionnaire.getById(connection, req.params.idObjet);
-    resQuestionnaire.then(function(result) {
-      if (result) {
-        params.questionnaire = result;
-        var questions = new Question();
-        var resQuestion = Question.getByIdQuestionnaire(connection, req.params.idObjet);
-        resQuestion.then(function(result2){
-          params.questions = result2;
-          res.render('previewQuestionnaire.ejs', params);
-        });
-      }
+    Questionnaire.getById(connection, req.params.idObjet).then(function(result) {
+        if (result) {
+            params.questionnaire = result;
+
+            Question.getByIdQuestionnaire(connection, req.params.idObjet).then(function(result2){
+
+                for (question of result2){
+                    Reponse.getByQuestionId(connection, question.idQuestion).then(function(reponses) {
+                        question.reponses = reponses;
+
+                        if (result2.indexOf(question) === result2.length - 1){
+                            params.questions = result2;
+                            res.render('previewQuestionnaire.ejs', params);
+                        }
+                    });
+                }
+            });
+        }
     });
 });
 
@@ -140,10 +162,9 @@ var prof = null;
 
 // Acceder au questionnaire
 server.get('/:idObjet/questionnaire', function(req, res) {
-
     if (!req.session.client){
         res.status(403)
-            .send('Identification impossible !');
+            .send('Vous devez être identifié !');
         return;
     }
 
@@ -199,7 +220,7 @@ server.get('/:idObjet/questionnaire', function(req, res) {
     });
 });
 
-server.post('/newQuestionnaire', jsonParser, function(req, res){console.log(req.session);
+server.post('/newQuestionnaire', jsonParser, function(req, res){
   var questionnaire = new Questionnaire(req.body["PassQuestionnaire"],req.body["titreQuestionnaire"],1);
   var resQuestionnaire = questionnaire.createInDB(connection,questionnaire);
   resQuestionnaire.then(function(result) {
@@ -215,7 +236,7 @@ server.post('/newQuestionnaire', jsonParser, function(req, res){console.log(req.
             if (result2) {
               var idQuestion = result2[0];
               var numRep = result2[1];
-              for(var index2 in req.body[numRep]["reponses"]) {console.log(numRep);
+              for(var index2 in req.body[numRep]["reponses"]) {
                 var reponse = new Reponse(req.body[numRep]["reponses"][index2]["libelle"],req.body[numRep]["reponses"][index2]["estLaReponse"],idQuestion);
                 var resReponse = reponse.createInDB(connection,reponse);
               }
