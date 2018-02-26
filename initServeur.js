@@ -45,7 +45,6 @@ server.get('/creerQuestionnaire', function(req, res) {
 });
 server.get('/questionnaires', function(req, res) {
     var params = {};
-<<<<<<< HEAD
     var questionnaire = new Questionnaire();
     var resQuestionnaire = questionnaire.getAll(connection);
     resQuestionnaire.then(function(result) {
@@ -53,10 +52,6 @@ server.get('/questionnaires', function(req, res) {
         params.Allquestionnaires = result;
         res.render('questionnaires.ejs', params);
       }
-=======
-    Questionnaire.getAll(connection).then(function(result) {
-      if (result) {params.allQuestionnaire = result;}
->>>>>>> b8d47b531ca3aabeef8f05ceeca4f50efa0e3112
     });
 });
 server.get('/:idObjet/previewQuestionnaire', function(req, res) {
