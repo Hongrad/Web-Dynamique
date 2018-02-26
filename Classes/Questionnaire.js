@@ -94,18 +94,22 @@ class Questionnaire {
             db.query("SELECT * FROM questionnaire WHERE idProfesseur=?", [id], function (err, result) {
                 if (err) {
                 return reject(err);
-                }
-                else {
-                    var questionnaire = new Questionnaire();
-                    questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-                    questionnaire.pid = result[0].pid;
-                    questionnaire.titre = result[0].titre;
-                    questionnaire.motDePasse = result[0].motDePasse;
-                    questionnaire.idProfesseur = result[0].idProfesseur;
-                    resolve(questionnaire);
-                }
-            });
-        });
+              }
+              else {
+                var questionnaires = [];
+  							for (var i = 0; i < result.length; i++) {
+                  var questionnaire = new Questionnaire();
+                  questionnaire.idQuestionnaire = result[i].idQuestionnaire;
+                  questionnaire.pid = result[i].pid;
+                  questionnaire.titre = result[i].titre;
+                  questionnaire.motDePasse = result[i].motDePasse;
+                  questionnaire.idProfesseur = result[i].idProfesseur;
+  								questionnaires.push(questionnaire);
+  							}
+  							resolve(questionnaires); // Renvoie la liste des questionnaires
+              }
+          });
+      });
     }
 
 	/**
@@ -116,24 +120,24 @@ class Questionnaire {
 	 */
     static getAll(db) {
 		return new Promise((resolve, reject) => {
-            db.query("SELECT * FROM questionnaire",function (err, result) {
-                if (err) {
-                    return reject(err);
-                }
-                else {
-                    var questionnaires = [];
-                    for (var i = 0; i < result.length; i++) {
-                        var questionnaire = new Questionnaire();
-                        questionnaire.idQuestionnaire = result[i].idQuestionnaire;
-                        questionnaire.pid = result[i].pid;
-                        questionnaire.titre = result[i].titre;
-                        questionnaire.motDePasse = result[i].motDePasse;
-                        questionnaire.idProfesseur = result[i].idProfesseur;
-                        questionnaires.push(questionnaire);
-                    }
-                    resolve(questionnaires); // Renvoie la liste des questionnaires
-                }
-            });
+				db.query("SELECT * FROM questionnaire",function (err, result) {
+						if (err) {
+							return reject(err);
+						}
+						else {
+							var questionnaires = [];
+							for (var i = 0; i < result.length; i++) {
+                var questionnaire = new Questionnaire();
+                questionnaire.idQuestionnaire = result[i].idQuestionnaire;
+                questionnaire.pid = result[i].pid;
+                questionnaire.titre = result[i].titre;
+                questionnaire.motDePasse = result[i].motDePasse;
+                questionnaire.idProfesseur = result[i].idProfesseur;
+								questionnaires.push(questionnaire);
+							}
+							resolve(questionnaires); // Renvoie la liste des questionnaires
+						}
+				});
 		});
 	}
 
