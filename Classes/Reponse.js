@@ -46,10 +46,17 @@ class Reponse {
      * @param id
      * @returns {Etudiant}
      */
-    static getById(db,id) {
+    static getById(db, id, callback) {
       db.query("SELECT * FROM reponse WHERE idReponse=?", [id], function (err, result) {
           if (err) throw err;
-          //TODO voir getById Etudiant
+
+          var reponse = null;
+
+          if (result.length > 0){
+              reponse = new Reponse(result[0].idReponse, result[0].libelle, result[0].estLaReponse, result[0].idQuestion);
+          }
+
+          return callback(reponse);
       });
     }
 

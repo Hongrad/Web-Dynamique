@@ -67,48 +67,49 @@ class Questionnaire {
 	 */
 	getById(db,id) {
 		return new Promise((resolve, reject) => {
-				db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
-						if (err) {
-							return reject(err);
-						}
-						else {
-							var questionnaire = new Questionnaire();
-              questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-              questionnaire.pid = result[0].pid;
-              questionnaire.titre = result[0].titre;
-              questionnaire.motDePasse = result[0].motDePasse;
-              questionnaire.idProfesseur = result[0].idProfesseur;
-							resolve(questionnaire);
-						}
-				});
+            db.query("SELECT * FROM questionnaire WHERE idQuestionnaire=?", [id], function (err, result) {
+                if (err) {
+                    return reject(err);
+                }else if (result.length == 0) {
+                    resolve(null);
+                }else{
+                    var questionnaire = new Questionnaire();
+                    questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+                    questionnaire.pid = result[0].pid;
+                    questionnaire.titre = result[0].titre;
+                    questionnaire.motDePasse = result[0].motDePasse;
+                    questionnaire.idProfesseur = result[0].idProfesseur;
+                    resolve(questionnaire);
+                }
+            });
 		});
 	}
 
-  /**
- * Récupère un questionnaire avec son id
- *
- * @param db
- * @param id
- * @returns {Questionnaire}
- */
-getByIdProf(db,id) {
-  return new Promise((resolve, reject) => {
-      db.query("SELECT * FROM questionnaire WHERE idProfesseur=?", [id], function (err, result) {
-          if (err) {
-            return reject(err);
-          }
-          else {
-            var questionnaire = new Questionnaire();
-            questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-            questionnaire.pid = result[0].pid;
-            questionnaire.titre = result[0].titre;
-            questionnaire.motDePasse = result[0].motDePasse;
-            questionnaire.idProfesseur = result[0].idProfesseur;
-            resolve(questionnaire);
-          }
+    /**
+    * Récupère un questionnaire avec son id
+    *
+    * @param db
+    * @param id
+    * @returns {Questionnaire}
+    */
+    getByIdProf(db,id) {
+      return new Promise((resolve, reject) => {
+          db.query("SELECT * FROM questionnaire WHERE idProfesseur=?", [id], function (err, result) {
+              if (err) {
+                return reject(err);
+              }
+              else {
+                var questionnaire = new Questionnaire();
+                questionnaire.idQuestionnaire = result[0].idQuestionnaire;
+                questionnaire.pid = result[0].pid;
+                questionnaire.titre = result[0].titre;
+                questionnaire.motDePasse = result[0].motDePasse;
+                questionnaire.idProfesseur = result[0].idProfesseur;
+                resolve(questionnaire);
+              }
+          });
       });
-  });
-}
+    }
 
 	/**
 	 * Récupère tous les questionnaires
