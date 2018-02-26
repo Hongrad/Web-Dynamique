@@ -48,6 +48,7 @@
                     data[index] = question;
                 });
                 data["titreQuestionnaire"]=$("#titreQuestionnaire").val();
+                data["PassQuestionnaire"]=$("#PassQuestionnaire").val();
                 console.log(data);
       					$.ajax({
       						  type: 'POST',
@@ -55,8 +56,9 @@
     				        contentType: 'application/json',
                     url: 'http://localhost:6900/newQuestionnaire',
                     success: function(data) {
-                        console.log('success');
-                        console.log(data);
+                      if (data.status === "Success") {
+                        window.location = data.redirect;
+                      }
                     }
                 });
               },
@@ -89,6 +91,10 @@
   <div class="content">
     <div class="titre-questionnaire">
         <h3>Créez votre questionnaire : <input type="text" id="titreQuestionnaire" placeholder="Insérez votre titre"/></h3>
+
+    </div>
+    <div class="titre-questionnaire">
+      <h3>Mot de passe du questionnaire : <input type="text" id="PassQuestionnaire" placeholder="Insérez votre mot de passe"/></h3>
     </div>
     <div class="creerQ-question">
       <p class="titreQuestion">Question 1 / <input type="text" placeholder="Titre de la question"/><label>Multiple ?<input type="checkbox" onChange="updateQuestionType(this);"/></label></p>
