@@ -99,13 +99,17 @@ class Questionnaire {
                 return reject(err);
               }
               else {
-                var questionnaire = new Questionnaire();
-                questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-                questionnaire.pid = result[0].pid;
-                questionnaire.titre = result[0].titre;
-                questionnaire.motDePasse = result[0].motDePasse;
-                questionnaire.idProfesseur = result[0].idProfesseur;
-                resolve(questionnaire);
+                var questionnaires = [];
+  							for (var i = 0; i < result.length; i++) {
+                  var questionnaire = new Questionnaire();
+                  questionnaire.idQuestionnaire = result[i].idQuestionnaire;
+                  questionnaire.pid = result[i].pid;
+                  questionnaire.titre = result[i].titre;
+                  questionnaire.motDePasse = result[i].motDePasse;
+                  questionnaire.idProfesseur = result[i].idProfesseur;
+  								questionnaires.push(questionnaire);
+  							}
+  							resolve(questionnaires); // Renvoie la liste des questionnaires
               }
           });
       });
@@ -127,11 +131,11 @@ class Questionnaire {
 							var questionnaires = [];
 							for (var i = 0; i < result.length; i++) {
                 var questionnaire = new Questionnaire();
-                questionnaire.idQuestionnaire = result[0].idQuestionnaire;
-                questionnaire.pid = result[0].pid;
-                questionnaire.titre = result[0].titre;
-                questionnaire.motDePasse = result[0].motDePasse;
-                questionnaire.idProfesseur = result[0].idProfesseur;
+                questionnaire.idQuestionnaire = result[i].idQuestionnaire;
+                questionnaire.pid = result[i].pid;
+                questionnaire.titre = result[i].titre;
+                questionnaire.motDePasse = result[i].motDePasse;
+                questionnaire.idProfesseur = result[i].idProfesseur;
 								questionnaires.push(questionnaire);
 							}
 							resolve(questionnaires); // Renvoie la liste des questionnaires

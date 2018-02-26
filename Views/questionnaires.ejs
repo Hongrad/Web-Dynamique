@@ -19,44 +19,13 @@
     <h2 class="quetionnaires-titre">Vos questionnaires:</h2>
     <span></span>
     <% for(var i=0; i < Allquestionnaires.length; i++) {%>
-      <a href="/<%=Allquestionnaires[i].idQuestionnaire%>/Questionnaire">
+      <a href="/<%=Allquestionnaires[i].idQuestionnaire%>/previewQuestionnaire">
         <div class="questionnaires-bloc">
           <p class="questionnaires-bloc-titre">Questionnaire <%=Allquestionnaires[i].titre%></p>
           <p class="questionnaires-bloc-pin">CODE PIN : <span><%=Allquestionnaires[i].pid%></span></p>
         </div>
       </a>
     <%}%>
-  <!--
-
-      <a href="" id="">
-        <div class="questionnaires-bloc">
-          <p class="questionnaires-bloc-titre">Questionnaire 1</p>
-          <p class="questionnaires-bloc-pin">CODE PIN : <span>aohfpznf</span></p>
-        </div>
-      </a>
-      <a href="" id="">
-        <div class="questionnaires-bloc">
-          <p class="questionnaires-bloc-titre">Questionnaire 2</p>
-          <p class="questionnaires-bloc-pin">CODE PIN : <span>aoh68znf</span></p>
-        </div>
-      </a>
-      <a href="" id="">
-        <div class="questionnaires-bloc">
-          <p class="questionnaires-bloc-titre">Questionnaire 3</p>
-          <p class="questionnaires-bloc-pin">CODE PIN : <span>aohfpznf</span></p>
-        </div>
-      </a>
-      <a href="" id="">
-        <div class="questionnaires-bloc">
-          <p class="questionnaires-bloc-titre">Questionnaire 4 sur deux lignes pour tester</p>
-          <p class="questionnaires-bloc-pin">CODE PIN : <span>aoh68znf</span></p>
-        </div>
-      </a>
-        <div class="questionnaires-bloc ajouter-questionnaire">
-          <span style="display:flex;"><a href="creerQuestionnaire"><button>+</button></a></span>
-          <p class="questionnaires-bloc-titre">Créez un nouveau</p>
-        </div>
-  </div>-->
 </body>
 <script>
 
