@@ -221,14 +221,20 @@ server.get('/:idObjet/questionnaire', function(req, res) {
 });
 
 server.post('/newQuestionnaire', jsonParser, function(req, res){
-  var questionnaire = new Questionnaire(req.body["PassQuestionnaire"],req.body["titreQuestionnaire"],1);
+    if (!req.session.client || !req.session.client._idProfesseur){
+        res.status(403)
+            .json({status: "Error"});
+        return;
+    }
+
+  var questionnaire = new Questionnaire("", req.body["titreQuestionnaire"], req.session.client._idProfesseur);
   var resQuestionnaire = questionnaire.createInDB(connection,questionnaire);
   resQuestionnaire.then(function(result) {
     //Si l'insertion s'est bien passée
     if (result) {
       var idQuestionnaire = result;
       for(var index in req.body) {
-        if(index!="titreQuestionnaire" && index!="PassQuestionnaire") {
+        if(index!="titreQuestionnaire") {
           var question = new Question(req.body[index]["libelle"],req.body[index]["multiple"],idQuestionnaire);
           var resQuestion = question.createInDB(connection,question,index);
           resQuestion.then(function(result2) {
