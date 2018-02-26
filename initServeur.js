@@ -96,8 +96,8 @@ server.post('/connexion', function(req, res) {
  * Se déconnecter
  */
 server.get('/deconnexion', function(req, res) {
-    if (req.session.client && req.session.client instanceof Professeur){
-        delete req.session;
+    if (req.session.client && req.session.client._idProfesseur){
+        delete req.session["client"];
     }
 
     res.redirect("/");
